@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post List</title>
+</head>
+<body>
+    {% for object in object_list %}
+    <h1>Post: {{object.title}} </h1>
+    <ul>
+        <li>Author: {{object.author}}</li>
+        <li>Date posted: {{object.date_posted}}</li>
+        <li>Tags: {{object.tags.all}}</li>
+    </ul>
+    {% endfor %}
+</body>
+</html>

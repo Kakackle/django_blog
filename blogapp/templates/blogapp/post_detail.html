@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{object.title}}</title>
+</head>
+<body>
+    <h1>Post: {{object.title}} </h1>
+    <ul>
+        <li>Author: {{object.author}}</li>
+        <li>Date posted: {{object.date_posted}}</li>
+        <li>Updated: {{object.date_updated}}</li>
+        <li>Tags:
+            <ul>
+            {% for tag in object.tags.all %}
+            <li>{{tag}}</li>
+            {% endfor %} 
+            </ul>
+        </li>
+        <li>Content: {{object.content}}</li>
+        <li>Comments: 
+            <ul>
+                {% for comm in object.comments.all %}
+                <li>{{comm}}</li>
+                {% endfor %} 
+            </ul>
+        </li>
+        <img src="{{object.img}}" alt="Post banner photo">
+    </ul>
+</body>
+</html>
