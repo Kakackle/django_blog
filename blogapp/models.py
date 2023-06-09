@@ -39,6 +39,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag, related_name="posts")
     content = models.CharField(max_length=2000)
     img = models.URLField(max_length=250)
+    views = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         return self.title

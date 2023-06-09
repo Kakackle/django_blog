@@ -5,9 +5,10 @@ from rest_framework.generics import get_object_or_404
 from rest_framework import generics
 from rest_framework import mixins
 from rest_framework.filters import SearchFilter
+from rest_framework import viewsets
 
 from blogapp.models import Post, Tag, Comment, User
-from blogapp.api.serializers import PostSerializer, TagSerializer, CommentSerializer, UserSerializer
+from blogapp.api.serializers import PostSerializer, PostSerializerCreate, TagSerializer, CommentSerializer, UserSerializer
 from blogapp.api.pagination import CustomPagination
 
 
@@ -37,15 +38,54 @@ class PostListAPIView(generics.ListCreateAPIView):
         return queryset
         
 
-class PostDetailAPIView(generics.RetrieveUpdateAPIView):
+class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+# generics.CreateAPIView
+class PostCreateAPIView(viewsets.ModelViewSet):
+    # queryset = Post.objects.all()
+    serializer_classes = {
+        'create': PostSerializerCreate,
+    }
+    default_serializer_class = PostSerializer
+
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+    def post(self, request, *args, **kwargs):
+        # print('self.request.data: ', self.request.data.get('tags'))
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        # print('self.request.data: ', self.request.data)
+        user_pk = self.kwargs.get("user_pk")
+        tags = self.request.data.get('tags')
+        tagsList = []
+        existingTags = Tag.objects.values_list('name', flat=True).distinct()
+        print('existing:', existingTags)
+        for tag in tags[0]:
+            # TODO: przesylamy jednak tagi nazwami i po nazwach dodajemy i sprawdzamy
+            if tag not in existingTags:
+                tagL = Tag.objects.create(
+                name = tag,
+                description = tag
+                )
+                # print('created object:', tagL)
+            else:
+                tagL = get_object_or_404(Tag, name=tag)
+            # tagL = get_object_or_404(Tag, pk=tag.get('id'))
+            
+            tagsList.append(tagL)
+        author = get_object_or_404(User, pk=user_pk)
+        serializer.save(author=author, tags=tagsList)
+        # return super().perform_create(serializer)
 
 class TagListAPIView(generics.ListCreateAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
-class TagDetailAPIView(generics.RetrieveUpdateAPIView):
+class TagDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
@@ -53,7 +93,7 @@ class UserListAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class UserDetailAPIView(generics.RetrieveUpdateAPIView):
+class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -61,6 +101,6 @@ class CommentListAPIView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-class CommentDetailAPIView(generics.RetrieveUpdateAPIView):
+class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer

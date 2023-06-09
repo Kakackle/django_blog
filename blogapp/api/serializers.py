@@ -11,7 +11,7 @@ class TagSerializer(serializers.ModelSerializer):
     # posts = serializers.StringRelatedField(many=True,
     #                                         read_only=True,
     #                                         )
-    # posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     
     class Meta:
         model = Tag
@@ -40,18 +40,31 @@ class PostSerializer(serializers.ModelSerializer):
     # comments = serializers.HyperlinkedRelatedField(many=True,
     #                                            read_only=True,
     #                                            view_name="api_comment_detail")
-    # user = serializers.HyperlinkedRelatedField(read_only=True,
+    # author = serializers.HyperlinkedRelatedField(read_only=True,
     #                                            view_name="api_user_detail")
-    tags = TagSerializer(many=True, read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
-    author = UserSerializer(read_only=True)
+    tags = serializers.PrimaryKeyRelatedField(many=True,
+                                               read_only=True,
+                                               )
+    comments = serializers.PrimaryKeyRelatedField(many=True,
+                                               read_only=True,
+                                               )
+    author = serializers.PrimaryKeyRelatedField(read_only=True,
+                                               )
+    # tags = TagSerializer(many=True, read_only=True)
+    # comments = CommentSerializer(many=True, read_only=True)
+    # author = UserSerializer(read_only=True)
 
     class Meta:
         model = Post
         fields = "__all__"
     
-    def validate(self, data):
-        pass
+    # def validate(self, data):
+    #     pass
 
+class PostSerializerCreate(serializers.ModelSerializer):
+    """Serializer for create / post operations"""
+    class Meta:
+        model = Post
+        fields = "__all__"
 
 
