@@ -4,25 +4,37 @@ from datetime import datetime
 
 class TagSerializer(serializers.ModelSerializer):
 
-    posts = serializers.HyperlinkedRelatedField(many=True,
-                                                read_only=True,
-                                                view_name="api_post_detail")
+    # posts = serializers.HyperlinkedRelatedField(many=True,
+    #                                             read_only=True,
+    #                                             view_name="api_post_detail")
+    
     # posts = PostSerializer(many=True, read_only=True)
+    
     # posts = serializers.StringRelatedField(many=True,
     #                                         read_only=True,
     #                                         )
+    
     posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     
     class Meta:
         model = Tag
         fields = "__all__"
 
+class TagSerializerSlug(serializers.ModelSerializer):
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    class Meta:
+        model = Tag
+        fields = "__all__"
+        lookup_field = 'slug'
+
 
 class UserSerializer(serializers.ModelSerializer):
-    posts = serializers.HyperlinkedRelatedField(many=True,
-                                                read_only=True,
-                                                view_name="api_post_detail")
+    # posts = serializers.HyperlinkedRelatedField(many=True,
+    #                                             read_only=True,
+    #                                             view_name="api_post_detail")
     
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = User
         fields = "__all__"

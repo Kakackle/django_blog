@@ -30,9 +30,11 @@ class PostListAPIView(generics.ListCreateAPIView):
         # print("tags:",tags)
         title = self.request.query_params.get("title", None)
         if author is not None:
-            queryset = queryset.filter(author__name__icontains=author)
+            # queryset = queryset.filter(author__name__icontains=author)
+            queryset = queryset.filter(author=author)
         if len(tags) is not 0:
-            queryset = queryset.filter(tags__name__in=tags)
+            # queryset = queryset.filter(tags__name__in=tags)
+            queryset = queryset.filter(tags__in=tags)
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
         return queryset
@@ -88,6 +90,11 @@ class TagListAPIView(generics.ListCreateAPIView):
 class TagDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+class TagDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    lookup_field='slug'
 
 class UserListAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()

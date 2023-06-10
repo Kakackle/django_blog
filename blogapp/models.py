@@ -1,14 +1,21 @@
 from django.db import models
-
+from django.template.defaultfilters import slugify
 class Tag(models.Model):
     """
     Tag object for posts, shared between posts
     """
     name = models.CharField(max_length=25)
     description = models.CharField(max_length=500)
+    slug = models.SlugField(null=False, unique=True)
+    # slug = models.SlugField(default='tag', null=True)
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
 class User(models.Model):
     """
