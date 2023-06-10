@@ -9,6 +9,7 @@ from rest_framework import viewsets
 
 from blogapp.models import Post, Tag, Comment, User
 from blogapp.api.serializers import PostSerializer, PostSerializerCreate, TagSerializer, CommentSerializer, UserSerializer
+from blogapp.api.serializers import TagSerializerSlug, UserSerializerSlug, PostSerializerSlug, CommentSerializerSlug
 from blogapp.api.pagination import CustomPagination
 
 
@@ -38,11 +39,21 @@ class PostListAPIView(generics.ListCreateAPIView):
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
         return queryset
-        
+        #FIXME: z jakiegos powodu niezrozumialego nie moge filtrowac tak przez tagi w slugach
+        # nawet jesli jako serializator postow dam ten ze slugami
+        # bo mowi ze "pole id musi byc numerem a dostalo tekst"
+        # jakie kurwa id mnie tu nie obchodzi zadne id o chuj ci chodzi
+        # ale ze takie uzycie query uzywamy tylko w wewnetrznych callach to poki co moze zostac
+        # ale przydaloby sie to kiedys naprawic    
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializerSlug
+    lookup_field = 'slug'
 
 # generics.CreateAPIView
 class PostCreateAPIView(viewsets.ModelViewSet):
@@ -85,7 +96,7 @@ class PostCreateAPIView(viewsets.ModelViewSet):
 
 class TagListAPIView(generics.ListCreateAPIView):
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    serializer_class = TagSerializerSlug
 
 class TagDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.all()
@@ -93,7 +104,7 @@ class TagDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class TagDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    serializer_class = TagSerializerSlug
     lookup_field='slug'
 
 class UserListAPIView(generics.ListCreateAPIView):
@@ -104,6 +115,11 @@ class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class UserDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'slug'
+
 class CommentListAPIView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -111,3 +127,8 @@ class CommentListAPIView(generics.ListCreateAPIView):
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+class CommentDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = 'slug'

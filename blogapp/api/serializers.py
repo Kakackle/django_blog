@@ -21,7 +21,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class TagSerializerSlug(serializers.ModelSerializer):
-    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field='slug')
     class Meta:
         model = Tag
         fields = "__all__"
@@ -39,11 +39,26 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
 
+class UserSerializerSlug(serializers.ModelSerializer):
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = "__all__"
+        lookup_field = 'slug'
+
 class CommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Comment
         fields = "__all__"
+
+class CommentSerializerSlug(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        lookup_field = 'slug'
 
 class PostSerializer(serializers.ModelSerializer):
     # tags = serializers.HyperlinkedRelatedField(many=True,
@@ -72,6 +87,25 @@ class PostSerializer(serializers.ModelSerializer):
     
     # def validate(self, data):
     #     pass
+
+class PostSerializerSlug(serializers.ModelSerializer):
+    tags = serializers.SlugRelatedField(many=True,
+                                        read_only=True,
+                                        slug_field = 'slug'
+                                        )
+    comments = serializers.SlugRelatedField(many=True,
+                                            read_only=True,
+                                            slug_field = 'slug'
+                                            )
+    author = serializers.SlugRelatedField(read_only=True,
+                                          slug_field = 'slug'
+                                            )
+    
+    class Meta:
+        model = Post
+        fields = "__all__"
+        lookup_field = 'slug'
+    
 
 class PostSerializerCreate(serializers.ModelSerializer):
     """Serializer for create / post operations"""
