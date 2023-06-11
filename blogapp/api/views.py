@@ -7,6 +7,8 @@ from rest_framework import mixins
 from rest_framework.filters import SearchFilter
 from rest_framework import viewsets
 
+from django.template.defaultfilters import slugify
+
 from blogapp.models import Post, Tag, Comment, User
 from blogapp.api.serializers import PostSerializer, PostSerializerCreate, TagSerializer, CommentSerializer, UserSerializer
 from blogapp.api.serializers import TagSerializerSlug, UserSerializerSlug, PostSerializerSlug, CommentSerializerSlug
@@ -19,7 +21,7 @@ from blogapp.api.pagination import CustomPagination
 
 class PostListAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostSerializerSlug
     pagination_class = CustomPagination
     # filter_backends = [SearchFilter]
     # search_fields = ["title"]
@@ -57,7 +59,7 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # generics.CreateAPIView
 class PostCreateAPIView(viewsets.ModelViewSet):
-    # queryset = Post.objects.all()
+    queryset = Post.objects.all()
     serializer_classes = {
         'create': PostSerializerCreate,
     }
@@ -67,8 +69,20 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
     def post(self, request, *args, **kwargs):
-        # print('self.request.data: ', self.request.data.get('tags'))
+        # print('self.request.data: ', self.request.data)
+        # user_pk = self.kwargs.get("user_pk")
+        # tags = self.request.data.get('tags')
+        # print('user_pk: ', user_pk, 'tags: ', tags)
         return self.create(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        # if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        print('serializer.errors:', serializer.errors)
 
     def perform_create(self, serializer):
         # print('self.request.data: ', self.request.data)
@@ -76,15 +90,12 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         tags = self.request.data.get('tags')
         tagsList = []
         existingTags = Tag.objects.values_list('name', flat=True).distinct()
-        print('existing:', existingTags)
-        for tag in tags[0]:
-            # TODO: przesylamy jednak tagi nazwami i po nazwach dodajemy i sprawdzamy
+        for tag in tags:
             if tag not in existingTags:
                 tagL = Tag.objects.create(
                 name = tag,
                 description = tag
                 )
-                # print('created object:', tagL)
             else:
                 tagL = get_object_or_404(Tag, name=tag)
             # tagL = get_object_or_404(Tag, pk=tag.get('id'))

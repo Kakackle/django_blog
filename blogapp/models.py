@@ -6,14 +6,15 @@ class Tag(models.Model):
     """
     name = models.CharField(max_length=25)
     description = models.CharField(max_length=500)
-    slug = models.SlugField(null=False, unique=True)
+    slug = models.SlugField(null=False, unique=True, default='temp')
     # slug = models.SlugField(default='tag', null=True)
 
     def __str__(self):
         return self.name
     
     def save(self, *args, **kwargs):
-        if not self.slug:
+        # if not self.slug:
+        if self.slug == 'temp':
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
@@ -55,13 +56,14 @@ class Post(models.Model):
     content = models.CharField(max_length=2000)
     img = models.URLField(max_length=250)
     views = models.IntegerField(default=0, blank=True)
-    slug = models.SlugField(null=False, unique=True)
+    slug = models.SlugField(null=False, unique=True, default='temp')
 
     def __str__(self):
         return self.title
     
     def save(self, *args, **kwargs):
-        if not self.slug:
+        # if not self.slug:
+        if self.slug == 'temp':
             self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
 
