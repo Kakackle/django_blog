@@ -30,13 +30,13 @@ class User(models.Model):
     bio = models.CharField(max_length=500)
     avatar = models.URLField(max_length=250)
     # slug = models.SlugField(default='slug', null=True)
-    slug = models.SlugField(null=False, unique=True)
+    slug = models.SlugField(null=False, unique=True, default='temp')
     
     def __str__(self):
         return self.username
     
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if self.slug == 'temp':
             self.slug = slugify(self.username)
         return super().save(*args, **kwargs)
 

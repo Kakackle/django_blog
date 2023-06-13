@@ -34,7 +34,7 @@ class PostListAPIView(generics.ListCreateAPIView):
         title = self.request.query_params.get("title", None)
         if author is not None:
             # queryset = queryset.filter(author__name__icontains=author)
-            queryset = queryset.filter(author=author)
+            queryset = queryset.filter(author__username=author)
         if len(tags) is not 0:
             # queryset = queryset.filter(tags__name__in=tags)
             queryset = queryset.filter(tags__in=tags)
