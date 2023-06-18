@@ -1,10 +1,12 @@
 from django.urls import path, include
 from blogapp.api.views import PostListAPIView, PostDetailAPIView, TagListAPIView, TagDetailAPIView, \
 UserListAPIView, UserDetailAPIView, CommentListAPIView, CommentDetailAPIView, PostCreateAPIView, \
-TagDetailSlugAPIView, UserDetailSlugAPIView, PostDetailSlugAPIView, CommentDetailSlugAPIView
+TagDetailSlugAPIView, UserDetailSlugAPIView, PostDetailSlugAPIView, CommentDetailSlugAPIView, \
+PostListAllAPIView
 
 urlpatterns = [
     path('posts/', PostListAPIView.as_view(), name="api_post_list"),
+    path('posts/all/', PostListAllAPIView.as_view(), name="api_posts_list_all"),
     path('posts/<int:pk>', PostDetailAPIView.as_view(), name="api_post_detail"),
     path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),
     

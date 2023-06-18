@@ -50,10 +50,10 @@ class Post(models.Model):
     author = models.ForeignKey(User,
                                 on_delete=models.CASCADE,
                                 related_name="posts")
-    date_posted = models.DateField(auto_now_add=True)
+    date_posted = models.DateField()
     date_updated = models.DateField(auto_now=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="posts")
-    content = models.CharField(max_length=2000)
+    content = models.TextField()
     img = models.URLField(max_length=250)
     views = models.IntegerField(default=0, blank=True)
     slug = models.SlugField(null=False, unique=True, default='temp')

@@ -37,16 +37,25 @@ class PostListAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(author__username=author)
         if len(tags) is not 0:
             # queryset = queryset.filter(tags__name__in=tags)
-            queryset = queryset.filter(tags__in=tags)
+            queryset = queryset.filter(tags__in=tags).distinct()
+            print('len: ', queryset.__len__())
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
+        # Ordering?
+        ordering = self.request.query_params.get("ordering", None)
+        if ordering:
+            if ordering == "title":
+                queryset = queryset.order_by("title")
+            if ordering == "date":
+                queryset = queryset.order_by("-date_posted")      
         return queryset
-        #FIXME: z jakiegos powodu niezrozumialego nie moge filtrowac tak przez tagi w slugach
-        # nawet jesli jako serializator postow dam ten ze slugami
-        # bo mowi ze "pole id musi byc numerem a dostalo tekst"
-        # jakie kurwa id mnie tu nie obchodzi zadne id o chuj ci chodzi
-        # ale ze takie uzycie query uzywamy tylko w wewnetrznych callach to poki co moze zostac
-        # ale przydaloby sie to kiedys naprawic    
+        # TODO: sprobuj tak jak autora zobaczy te tagi po slugach?
+        # moze powinno dzialac, bo to __name, __in itd to jakies sprytne jest, nie wiem
+
+class PostListAllAPIView(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializerSlug
+
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
@@ -102,7 +111,8 @@ class PostCreateAPIView(viewsets.ModelViewSet):
             
             tagsList.append(tagL)
         author = get_object_or_404(User, pk=user_pk)
-        serializer.save(author=author, tags=tagsList)
+        date_posted = self.request.data.get('date_posted')
+        serializer.save(author=author, tags=tagsList, date_posted=date_posted)
         # return super().perform_create(serializer)
 
 class TagListAPIView(generics.ListCreateAPIView):
