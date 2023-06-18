@@ -31,6 +31,7 @@ class User(models.Model):
     avatar = models.URLField(max_length=250)
     # slug = models.SlugField(default='slug', null=True)
     slug = models.SlugField(null=False, unique=True, default='temp')
+    liked_posts = models.ManyToManyField('Post', related_name="liked_by")
     
     def __str__(self):
         return self.username
@@ -56,6 +57,8 @@ class Post(models.Model):
     content = models.TextField()
     img = models.URLField(max_length=250)
     views = models.IntegerField(default=0, blank=True)
+    # liked_by = models.JSONField(null=True)
+    likes = models.IntegerField(default=0, blank=True)
     slug = models.SlugField(null=False, unique=True, default='temp')
 
     def __str__(self):
@@ -65,6 +68,8 @@ class Post(models.Model):
         # if not self.slug:
         if self.slug == 'temp':
             self.slug = slugify(self.title)
+        if self.likes == 0:
+            self.likes = self.liked_by.all().count()
         return super().save(*args, **kwargs)
 
 class Comment(models.Model):

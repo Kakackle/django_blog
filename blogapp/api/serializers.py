@@ -33,15 +33,17 @@ class UserSerializer(serializers.ModelSerializer):
     #                                             read_only=True,
     #                                             view_name="api_post_detail")
     
-    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
+    # posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
+    liked_posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
     class Meta:
         model = User
         fields = "__all__"
 
 class UserSerializerSlug(serializers.ModelSerializer):
-    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
+    # posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
+    liked_posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
     class Meta:
         model = User
         fields = "__all__"
@@ -100,11 +102,19 @@ class PostSerializerSlug(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True,
                                           slug_field = 'slug'
                                             )
+    liked_by = serializers.SlugRelatedField(many=True, read_only=False,
+                                            slug_field = 'slug',
+                                            queryset=User.objects.all())
     
     class Meta:
         model = Post
         fields = "__all__"
         lookup_field = 'slug'
+
+    # def update(self, instance, validated_data):
+    #     user_data = validated_data.pop('liked_by')
+    #     instance = super(PostSerializerSlug, self).update(instance, validated_data)
+
     
 
 class PostSerializerCreate(serializers.ModelSerializer):

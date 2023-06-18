@@ -47,7 +47,11 @@ class PostListAPIView(generics.ListCreateAPIView):
             if ordering == "title":
                 queryset = queryset.order_by("title")
             if ordering == "date":
-                queryset = queryset.order_by("-date_posted")      
+                queryset = queryset.order_by("-date_posted")
+            if ordering == "views":
+                queryset = queryset.order_by("-views")
+            if ordering == "likes":
+                queryset = queryset.order_by("-likes")    
         return queryset
         # TODO: sprobuj tak jak autora zobaczy te tagi po slugach?
         # moze powinno dzialac, bo to __name, __in itd to jakies sprytne jest, nie wiem
@@ -113,6 +117,72 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         author = get_object_or_404(User, pk=user_pk)
         date_posted = self.request.data.get('date_posted')
         serializer.save(author=author, tags=tagsList, date_posted=date_posted)
+        # return super().perform_create(serializer)
+
+# view for liking a post through perform_create modification from partial request?
+# przekombinowane, wystarczy patch ze slugami, rozpoznaje
+# to be DELETED?
+class PostLikeAPIView(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_classes = {
+        'update': PostSerializerCreate,
+    }
+    default_serializer_class = PostSerializer
+
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+    def patch(self, request, *args, **kwargs):
+        # print('self.request.data: ', self.request.data)
+        # user_pk = self.kwargs.get("user_pk")
+        # tags = self.request.data.get('tags')
+        # print('user_pk: ', user_pk, 'tags: ', tags)
+        # return self.create(request, *args, **kwargs)
+        return self.partial_update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        # print('self.request.data: ', self.request.data)
+        # user_pk = self.kwargs.get("user_pk")
+        # tags = self.request.data.get('tags')
+        user = self.request.data.get('user_slug')
+        # tagsList = []
+        # existingTags = Tag.objects.values_list('name', flat=True).distinct()
+        existingUsers = Post.objects.liked_by.values_list('slug', flat=True).distinct()
+        # liked_by = Post.objects.liked_by
+
+        if user not in existingUsers:
+            userN = get_object_or_404(User, slug=user)
+            Post.objects.liked_by.add(userN)
+        # for tag in tags:
+        #     if tag not in existingTags:
+        #         tagL = Tag.objects.create(
+        #         name = tag,
+        #         description = tag
+        #         )
+        #     else:
+        #         tagL = get_object_or_404(Tag, name=tag)
+        #     # tagL = get_object_or_404(Tag, pk=tag.get('id'))
+            
+        #     tagsList.append(tagL)
+        # author = get_object_or_404(User, pk=user_pk)
+        # date_posted = self.request.data.get('date_posted')
+        # serializer.save(author=author, tags=tagsList, date_posted=date_posted)
+        # serializer.save(liked_by=liked_by)
+        serializer.save()
         # return super().perform_create(serializer)
 
 class TagListAPIView(generics.ListCreateAPIView):
