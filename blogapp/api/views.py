@@ -56,14 +56,19 @@ class PostListAPIView(generics.ListCreateAPIView):
         # TODO: sprobuj tak jak autora zobaczy te tagi po slugach?
         # moze powinno dzialac, bo to __name, __in itd to jakies sprytne jest, nie wiem
 
+
 class PostListAllAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug
 
-
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+    def perform_update(self, serializer):
+        title = self.request.data.get("title")
+        slug = slugify(title)
+        serializer.save(slug=slug)
 
 class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
