@@ -32,6 +32,7 @@ class User(models.Model):
     # slug = models.SlugField(default='slug', null=True)
     slug = models.SlugField(null=False, unique=True, default='temp')
     liked_posts = models.ManyToManyField('Post', related_name="liked_by")
+    liked_comments = models.ManyToManyField('Comment', related_name='liked_by')
     
     def __str__(self):
         return self.username
@@ -75,21 +76,39 @@ class Post(models.Model):
 class Comment(models.Model):
     """
     Comment object for posts, multiple on one post, one user author
+    replies allowed, both as parent and children
     """
-    content = models.CharField(max_length=500)
-    user = models.ForeignKey(User,
+    content = models.TextField()
+    author = models.ForeignKey(User,
                              on_delete=models.CASCADE,
                              related_name="comments")
     post = models.ForeignKey(Post,
                              on_delete=models.CASCADE,
                              related_name="comments")
     date_posted = models.DateField(auto_now_add=True)
-    slug = models.SlugField(null=False, unique=True)
+    date_updated = models.DateField(auto_now=True)
+    slug = models.SlugField(null=False, unique=True, default="empty")
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    likes = models.IntegerField(default=0, blank=True)
+
+    class Meta:
+        ordering=['-date_posted']
 
     def __str__(self):
-        return self.content[:25]
+        # return str(self.author) + str(self.content[:25])
+        return str(self.post.slug) + '-' + str(self.author.slug) + '-' + str(self.parent)
+    
+    @property
+    def children(self):
+        return Comment.objects.filter(parent=self).reverse()
+    
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
     
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = str(self.user.slug) + str(self.post.slug)
+        if self.slug == "empty":
+            self.slug = str(self.post.slug) + '-' + str(self.author.slug) + '-' + str(self.parent)
         return super().save(*args, **kwargs)

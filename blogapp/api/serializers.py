@@ -49,14 +49,37 @@ class UserSerializerSlug(serializers.ModelSerializer):
         fields = "__all__"
         lookup_field = 'slug'
 
+# class subCommentSerializer(serializers.ModelSerializer):
+#     author = serializers.PrimaryKeyRelatedField(read_only=True,
+#                                                )
+#     parent = serializers.PrimaryKeyRelatedField(read_only=True)
+#     class Meta:
+#         model = Comment
+#         # fields = "__all__"
+#         fields = ("id", "content", "date_posted", "parent", "author")
+
 class CommentSerializer(serializers.ModelSerializer):
-    
+    author = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    parent = serializers.PrimaryKeyRelatedField(read_only=True)
+    # children = subCommentSerializer()
+    # children = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    liked_by = serializers.SlugRelatedField(many=True, read_only=False,
+                                            slug_field = 'slug',
+                                            queryset=User.objects.all())
     class Meta:
         model = Comment
         fields = "__all__"
 
+    def get_fields(self):
+        fields = super(CommentSerializer, self).get_fields()
+        fields['replies'] = CommentSerializer(many=True, required=False)
+        return fields
+
 class CommentSerializerSlug(serializers.ModelSerializer):
-    
+    author = serializers.PrimaryKeyRelatedField(read_only=True,)
+    parent = serializers.PrimaryKeyRelatedField(read_only=True)
+    # children = subCommentSerializer(many=True)
     class Meta:
         model = Comment
         fields = "__all__"
