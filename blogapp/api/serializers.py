@@ -36,6 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
     # posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
     liked_posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
+    
+    avatar = serializers.ImageField(required=False)
     class Meta:
         model = User
         fields = "__all__"
@@ -44,6 +46,8 @@ class UserSerializerSlug(serializers.ModelSerializer):
     # posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
     liked_posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
+    
+    avatar = serializers.ImageField(required=False)
     class Meta:
         model = User
         fields = "__all__"
@@ -106,6 +110,7 @@ class PostSerializer(serializers.ModelSerializer):
     # comments = CommentSerializer(many=True, read_only=True)
     # author = UserSerializer(read_only=True)
 
+    img = serializers.ImageField(required=False)
     class Meta:
         model = Post
         fields = "__all__"
@@ -128,7 +133,7 @@ class PostSerializerSlug(serializers.ModelSerializer):
     liked_by = serializers.SlugRelatedField(many=True, read_only=False,
                                             slug_field = 'slug',
                                             queryset=User.objects.all())
-    
+    img = serializers.ImageField(required=False)
     class Meta:
         model = Post
         fields = "__all__"
@@ -142,6 +147,7 @@ class PostSerializerSlug(serializers.ModelSerializer):
 
 class PostSerializerCreate(serializers.ModelSerializer):
     """Serializer for create / post operations"""
+    img = serializers.ImageField(required=False)
     class Meta:
         model = Post
         fields = "__all__"

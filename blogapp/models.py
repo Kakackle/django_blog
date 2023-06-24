@@ -18,6 +18,14 @@ class Tag(models.Model):
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
+# Pozwoli sprecyzowac folder to ktorego beda uploadowane obrazki zamiast
+# Ogolnego sprecyzowanego w settings
+def upload_to_avatar(instance, filename):
+    return 'images/avatars/{filename}'.format(filename=filename)
+
+def upload_to_cover(instance, filename):
+    return 'images/covers/{filename}'.format(filename=filename)
+
 class User(models.Model):
     """
     Blog user model (most likely to be turned into a profile
@@ -28,11 +36,12 @@ class User(models.Model):
     password = models.CharField(max_length=50)
     mail = models.EmailField(max_length=100)
     bio = models.CharField(max_length=500)
-    avatar = models.URLField(max_length=250)
+    # avatar = models.URLField(max_length=250)
+    avatar = models.ImageField(null=True, blank=True, upload_to=upload_to_avatar)
     # slug = models.SlugField(default='slug', null=True)
     slug = models.SlugField(null=False, unique=True, default='temp')
-    liked_posts = models.ManyToManyField('Post', related_name="liked_by")
-    liked_comments = models.ManyToManyField('Comment', related_name='liked_by')
+    liked_posts = models.ManyToManyField('Post', related_name="liked_by", blank=True)
+    liked_comments = models.ManyToManyField('Comment', related_name='liked_by', blank=True)
     
     def __str__(self):
         return self.username
@@ -56,7 +65,8 @@ class Post(models.Model):
     date_updated = models.DateField(auto_now=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="posts")
     content = models.TextField()
-    img = models.URLField(max_length=250)
+    # img = models.URLField(max_length=250)
+    img = models.ImageField(null=True, blank=True, upload_to=upload_to_cover)
     views = models.IntegerField(default=0, blank=True)
     # liked_by = models.JSONField(null=True)
     likes = models.IntegerField(default=0, blank=True)
@@ -69,8 +79,8 @@ class Post(models.Model):
         # if not self.slug:
         if self.slug == 'temp':
             self.slug = slugify(self.title)
-        if self.likes == 0:
-            self.likes = self.liked_by.all().count()
+        # if self.likes == 0 and self.liked_by:
+        #     self.likes = self.liked_by.all().count()
         return super().save(*args, **kwargs)
 
 class Comment(models.Model):
