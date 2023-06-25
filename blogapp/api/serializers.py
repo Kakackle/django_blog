@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from blogapp.models import Post, Tag, User, Comment
+from blogapp.models import Post, Tag, User, Comment, ImagePost
 from datetime import datetime
 
 class TagSerializer(serializers.ModelSerializer):
@@ -106,6 +106,11 @@ class PostSerializer(serializers.ModelSerializer):
                                                )
     author = serializers.PrimaryKeyRelatedField(read_only=True,
                                                )
+    # post_images = serializers.HyperlinkedRelatedField(many=True,
+    #                                                   read_only=True,
+    #                                                   view_name='api_post_image_name')
+    post_images = serializers.SlugRelatedField(many=True, read_only=True, slug_field='slug')
+
     # tags = TagSerializer(many=True, read_only=True)
     # comments = CommentSerializer(many=True, read_only=True)
     # author = UserSerializer(read_only=True)
@@ -134,6 +139,11 @@ class PostSerializerSlug(serializers.ModelSerializer):
                                             slug_field = 'slug',
                                             queryset=User.objects.all())
     img = serializers.ImageField(required=False)
+    # post_images = serializers.HyperlinkedRelatedField(many=True,
+    #                                                   read_only=True,
+    #                                                   view_name='api_post_image_name')
+    post_images = serializers.SlugRelatedField(many=True, read_only=True, slug_field='slug')
+
     class Meta:
         model = Post
         fields = "__all__"
@@ -143,8 +153,6 @@ class PostSerializerSlug(serializers.ModelSerializer):
     #     user_data = validated_data.pop('liked_by')
     #     instance = super(PostSerializerSlug, self).update(instance, validated_data)
 
-    
-
 class PostSerializerCreate(serializers.ModelSerializer):
     """Serializer for create / post operations"""
     img = serializers.ImageField(required=False)
@@ -152,4 +160,13 @@ class PostSerializerCreate(serializers.ModelSerializer):
         model = Post
         fields = "__all__"
 
+# ---------------------------------------------------------------------------- #
+#                                    IMAGES                                    #
+# ---------------------------------------------------------------------------- #
+class PostImageSerializer(serializers.ModelSerializer):
 
+    post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    class Meta:
+        model = ImagePost
+        fields = "__all__"
+        lookup_field = 'name'

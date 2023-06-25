@@ -82,6 +82,25 @@ class Post(models.Model):
         # if self.likes == 0 and self.liked_by:
         #     self.likes = self.liked_by.all().count()
         return super().save(*args, **kwargs)
+    
+class ImagePost(models.Model):
+
+    def image_dir(self, filename):
+        return 'images/{post}/{filename}'.format(filename=self.name, post=self.post.slug)
+
+    name = models.CharField(max_length=255)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                             related_name="post_images")
+    image = models.ImageField(upload_to=image_dir)
+    slug = models.SlugField(null=False, unique=True, default='temp')
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.slug == 'temp':
+            self.slug = str(self.post.slug) + '-' + str(self.name)
+        return super().save(*args, **kwargs)
 
 class Comment(models.Model):
     """

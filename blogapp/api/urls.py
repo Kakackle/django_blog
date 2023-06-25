@@ -2,7 +2,8 @@ from django.urls import path, include
 from blogapp.api.views import PostListAPIView, PostDetailAPIView, TagListAPIView, TagDetailAPIView, \
 UserListAPIView, UserDetailAPIView, CommentListAPIView, CommentDetailAPIView, PostCreateAPIView, \
 TagDetailSlugAPIView, UserDetailSlugAPIView, PostDetailSlugAPIView, CommentDetailSlugAPIView, \
-PostListAllAPIView, CommentCreateAPIView, post_image_view
+PostListAllAPIView, CommentCreateAPIView, post_image_view, ImagePostListAPIView, ImagePostDetailAPIView
+
 
 urlpatterns = [
     path('posts/', PostListAPIView.as_view(), name="api_post_list"),
@@ -28,6 +29,7 @@ urlpatterns = [
           name="api_comment_create"),
 
     path('image/<slug:slug>', post_image_view, name='post_image_view'),
-
+    path('posts/<slug:slug>/images', ImagePostListAPIView.as_view(), name="api_post_images"),
+    path('posts/<slug:slug>/images/<str:name>', ImagePostDetailAPIView.as_view(), name="api_post_image_name"),
 ]
 
