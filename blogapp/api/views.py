@@ -72,16 +72,50 @@ class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     parser_classes = (MultiPartParser, FormParser)
 
+    def patch(self, request, *args, **kwargs):
+        # print('update request data:', self.request.data)
+        return self.partial_update(request, *args, **kwargs)
+
     def perform_update(self, serializer):
+        # print('update request data:', self.request.data)
         title = self.request.data.get("title")
         slug = slugify(title)
-        serializer.save(slug=slug)
+        # serializer.save(slug=slug)
+        serializer.save()
 
 class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug
     parser_classes = (MultiPartParser, FormParser)
     lookup_field = 'slug'
+
+    def patch(self, request, *args, **kwargs):
+        # print('update request data:', self.request.data)
+        return self.partial_update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        print('update request data:', self.request.data)
+        views = self.request.data.get('views')
+        likes = self.request.data.get('likes')
+        liked_by = self.request.data.getlist('liked_by[]')
+
+        post_slug = Post.objects.get(slug=self.kwargs.get("slug")).slug
+        # if title supplied in request - post edit request
+        req_title = self.request.data.get("title")
+        if req_title:
+            slug = slugify(req_title)
+            if(post_slug != slug):
+                serializer.save(slug=slug)
+        # if view request
+        if views:
+            serializer.save(views=views)
+        if liked_by:
+            new_liked_by = []
+            for user in liked_by:
+                userN = get_object_or_404(User, slug=user)
+                new_liked_by.append(userN)
+                # FIXME: tutaj opisz w devnotes czemu tak
+            serializer.save(liked_by=new_liked_by, likes=likes)
 
 # generics.CreateAPIView
 class PostCreateAPIView(viewsets.ModelViewSet):
@@ -193,8 +227,8 @@ class CommentCreateAPIView(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        # if serializer.is_valid():
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
+        # if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

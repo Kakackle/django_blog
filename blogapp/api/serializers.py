@@ -70,7 +70,8 @@ class CommentSerializer(serializers.ModelSerializer):
     post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     liked_by = serializers.SlugRelatedField(many=True, read_only=False,
                                             slug_field = 'slug',
-                                            queryset=User.objects.all())
+                                            queryset=User.objects.all(),
+                                            required=False)
     class Meta:
         model = Comment
         fields = "__all__"
@@ -137,7 +138,8 @@ class PostSerializerSlug(serializers.ModelSerializer):
                                             )
     liked_by = serializers.SlugRelatedField(many=True, read_only=False,
                                             slug_field = 'slug',
-                                            queryset=User.objects.all())
+                                            queryset=User.objects.all(),
+                                            required=False)
     img = serializers.ImageField(required=False)
     # post_images = serializers.HyperlinkedRelatedField(many=True,
     #                                                   read_only=True,
