@@ -1,13 +1,13 @@
-from blogapp.models import Post, User, Tag
-from blogapp.api.serializers import PostSerializer, PostSerializerSlug, PostSerializerCreate
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import generics
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework.response import Response
 from blogapp.api.pagination import CustomPagination
+from blogapp.api.serializers import (PostSerializer, PostSerializerCreate,
+                                     PostSerializerSlug)
+from blogapp.models import Post, Tag, User
 from django.template.defaultfilters import slugify
+from rest_framework import generics, status, viewsets
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
+
 
 class PostListAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all()

@@ -1,11 +1,13 @@
-from django.urls import path, include
-from blogapp.api.views import PostListAPIView, PostDetailAPIView, PostCreateAPIView, PostDetailSlugAPIView, PostListAllAPIView, PostListAllAPIView
-from blogapp.api.views import TagListAPIView, TagDetailAPIView, TagDetailSlugAPIView
-from blogapp.api.views import UserListAPIView, UserDetailAPIView, UserDetailSlugAPIView
-from blogapp.api.views import CommentListAPIView, CommentDetailAPIView
-from blogapp.api.views import CommentDetailSlugAPIView, CommentCreateAPIView
-from blogapp.api.views import post_image_view, ImagePostListAPIView, ImagePostDetailAPIView
-
+from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
+                               CommentDetailSlugAPIView, CommentListAPIView,
+                               ImagePostDetailAPIView, ImagePostListAPIView,
+                               PostCreateAPIView, PostDetailAPIView,
+                               PostDetailSlugAPIView, PostListAllAPIView,
+                               PostListAPIView, TagDetailAPIView,
+                               TagDetailSlugAPIView, TagListAPIView,
+                               UserDetailAPIView, UserDetailSlugAPIView,
+                               UserListAPIView, post_image_view)
+from django.urls import include, path
 
 urlpatterns = [
     path('posts/', PostListAPIView.as_view(), name="api_post_list"),

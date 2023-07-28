@@ -1,12 +1,11 @@
-from blogapp.models import Comment, User, Post
-from blogapp.api.serializers import CommentSerializer, CommentSerializerSlug
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import generics
-from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
 from blogapp.api.pagination import CustomPagination
+from blogapp.api.serializers import CommentSerializer, CommentSerializerSlug
+from blogapp.models import Comment, Post, User
+from rest_framework import generics, status, viewsets
+from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
+
 
 class CommentListAPIView(generics.ListCreateAPIView):
     # queryset = Comment.objects.all()
