@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blogapp',
     'rest_framework',
     'corsheaders',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,25 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174"
 ]
+
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Vue + Django backend API',
+    'DESCRIPTION': 'REST API backend for a blog application built with Vue',
+    'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+    # A regex specifying the common denominator for all operation paths. If
+    # SCHEMA_PATH_PREFIX is set to None, drf-spectacular will attempt to estimate
+    # a common prefix. Use '' to disable.
+    # Mainly used for tag extraction, where paths like '/api/v1/albums' with
+    # a SCHEMA_PATH_PREFIX regex '/api/v[0-9]' would yield the tag 'albums'.
+    'SCHEMA_PATH_PREFIX': '/api', #None,
+    # Remove matching SCHEMA_PATH_PREFIX from operation path. Usually used in
+    # conjunction with appended prefixes in SERVERS.
+    'SCHEMA_PATH_PREFIX_TRIM': False,
+}

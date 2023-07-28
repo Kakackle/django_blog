@@ -1,0 +1,1808 @@
+openapi: 3.0.3
+info:
+  title: Vue + Django backend API
+  version: 0.1.0
+  description: REST API backend for a blog application built with Vue
+paths:
+  /api/comments/:
+    get:
+      operationId: api_comments_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentList'
+          description: ''
+    post:
+      operationId: api_comments_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+  /api/comments/{id}:
+    get:
+      operationId: api_comments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    put:
+      operationId: api_comments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    patch:
+      operationId: api_comments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    delete:
+      operationId: api_comments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/comments/{slug}:
+    get:
+      operationId: api_comments_retrieve_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSerializerSlug'
+          description: ''
+    put:
+      operationId: api_comments_update_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentSerializerSlug'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentSerializerSlug'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSerializerSlug'
+          description: ''
+    patch:
+      operationId: api_comments_partial_update_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCommentSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCommentSerializerSlug'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCommentSerializerSlug'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSerializerSlug'
+          description: ''
+    delete:
+      operationId: api_comments_destroy_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/create_comment:
+    get:
+      operationId: api_create_comment_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+          description: ''
+  /api/image/{slug}:
+    get:
+      operationId: api_image_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_image_create
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/posts/:
+    get:
+      operationId: api_posts_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostSerializerSlugList'
+          description: ''
+    post:
+      operationId: api_posts_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostSerializerSlug'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSerializerSlug'
+          description: ''
+  /api/posts/{slug}:
+    get:
+      operationId: api_posts_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSerializerSlug'
+          description: ''
+    put:
+      operationId: api_posts_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostSerializerSlug'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSerializerSlug'
+          description: ''
+    patch:
+      operationId: api_posts_partial_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPostSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPostSerializerSlug'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSerializerSlug'
+          description: ''
+    delete:
+      operationId: api_posts_destroy
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/posts/{slug}/images:
+    get:
+      operationId: api_posts_images_list
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostImage'
+          description: ''
+    post:
+      operationId: api_posts_images_create
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostImage'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImage'
+          description: ''
+  /api/posts/{slug}/images/{name}:
+    get:
+      operationId: api_posts_images_retrieve
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImage'
+          description: ''
+    put:
+      operationId: api_posts_images_update
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostImage'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImage'
+          description: ''
+    patch:
+      operationId: api_posts_images_partial_update
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPostImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPostImage'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImage'
+          description: ''
+    delete:
+      operationId: api_posts_images_destroy
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/posts/all/:
+    get:
+      operationId: api_posts_all_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostSerializerSlug'
+          description: ''
+    post:
+      operationId: api_posts_all_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostSerializerSlug'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSerializerSlug'
+          description: ''
+  /api/tags/:
+    get:
+      operationId: api_tags_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagSerializerSlug'
+          description: ''
+    post:
+      operationId: api_tags_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TagSerializerSlug'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TagSerializerSlug'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagSerializerSlug'
+          description: ''
+  /api/tags/{id}:
+    get:
+      operationId: api_tags_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+          description: ''
+    put:
+      operationId: api_tags_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tag'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tag'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Tag'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+          description: ''
+    patch:
+      operationId: api_tags_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTag'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTag'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTag'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+          description: ''
+    delete:
+      operationId: api_tags_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/tags/{slug}:
+    get:
+      operationId: api_tags_retrieve_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagSerializerSlug'
+          description: ''
+    put:
+      operationId: api_tags_update_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TagSerializerSlug'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TagSerializerSlug'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagSerializerSlug'
+          description: ''
+    patch:
+      operationId: api_tags_partial_update_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTagSerializerSlug'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTagSerializerSlug'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTagSerializerSlug'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagSerializerSlug'
+          description: ''
+    delete:
+      operationId: api_tags_destroy_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/users/:
+    get:
+      operationId: api_users_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+          description: ''
+    post:
+      operationId: api_users_create
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/users/{id}:
+    get:
+      operationId: api_users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_users_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_users_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: api_users_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/users/{slug}:
+    get:
+      operationId: api_users_retrieve_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_users_update_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_users_partial_update_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: api_users_destroy_2
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/users/{user_pk}/post:
+    get:
+      operationId: api_users_post_list
+      parameters:
+      - in: path
+        name: user_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+          description: ''
+components:
+  schemas:
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        parent:
+          type: integer
+          readOnly: true
+        post:
+          type: string
+          readOnly: true
+        liked_by:
+          type: array
+          items:
+            type: string
+        content:
+          type: string
+        date_posted:
+          type: string
+          format: date
+          readOnly: true
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        likes:
+          type: integer
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+      required:
+      - author
+      - content
+      - date_posted
+      - date_updated
+      - id
+      - parent
+      - post
+    CommentSerializerSlug:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+        parent:
+          type: integer
+          readOnly: true
+        content:
+          type: string
+        date_posted:
+          type: string
+          format: date
+          readOnly: true
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        likes:
+          type: integer
+        post:
+          type: integer
+      required:
+      - author
+      - content
+      - date_posted
+      - date_updated
+      - id
+      - parent
+      - post
+    PaginatedCommentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    PaginatedPostSerializerSlugList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostSerializerSlug'
+    PatchedComment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        parent:
+          type: integer
+          readOnly: true
+        post:
+          type: string
+          readOnly: true
+        liked_by:
+          type: array
+          items:
+            type: string
+        content:
+          type: string
+        date_posted:
+          type: string
+          format: date
+          readOnly: true
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        likes:
+          type: integer
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    PatchedCommentSerializerSlug:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+        parent:
+          type: integer
+          readOnly: true
+        content:
+          type: string
+        date_posted:
+          type: string
+          format: date
+          readOnly: true
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        likes:
+          type: integer
+        post:
+          type: integer
+    PatchedPostImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        post:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        image:
+          type: string
+          format: uri
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+    PatchedPostSerializerSlug:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        comments:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        liked_by:
+          type: array
+          items:
+            type: string
+        img:
+          type: string
+          format: uri
+        post_images:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        date_posted:
+          type: string
+          format: date
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        content:
+          type: string
+        views:
+          type: integer
+        likes:
+          type: integer
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+    PatchedTag:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        posts:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 25
+        description:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+    PatchedTagSerializerSlug:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        posts:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 25
+        description:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        posts:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        liked_posts:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+        username:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 50
+        password:
+          type: string
+          maxLength: 50
+        mail:
+          type: string
+          format: email
+          maxLength: 100
+        bio:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        liked_comments:
+          type: array
+          items:
+            type: integer
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        comments:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+        post_images:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        img:
+          type: string
+          format: uri
+        title:
+          type: string
+          maxLength: 200
+        date_posted:
+          type: string
+          format: date
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        content:
+          type: string
+        views:
+          type: integer
+        likes:
+          type: integer
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - author
+      - comments
+      - content
+      - date_posted
+      - date_updated
+      - id
+      - post_images
+      - tags
+      - title
+    PostImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        post:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        image:
+          type: string
+          format: uri
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - id
+      - image
+      - name
+      - post
+    PostSerializerSlug:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        comments:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        liked_by:
+          type: array
+          items:
+            type: string
+        img:
+          type: string
+          format: uri
+        post_images:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        date_posted:
+          type: string
+          format: date
+        date_updated:
+          type: string
+          format: date
+          readOnly: true
+        content:
+          type: string
+        views:
+          type: integer
+        likes:
+          type: integer
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - author
+      - comments
+      - content
+      - date_posted
+      - date_updated
+      - id
+      - post_images
+      - tags
+      - title
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        posts:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 25
+        description:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - description
+      - id
+      - name
+      - posts
+    TagSerializerSlug:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        posts:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 25
+        description:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - description
+      - id
+      - name
+      - posts
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        posts:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        liked_posts:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+        username:
+          type: string
+          maxLength: 50
+        name:
+          type: string
+          maxLength: 50
+        password:
+          type: string
+          maxLength: 50
+        mail:
+          type: string
+          format: email
+          maxLength: 100
+        bio:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        liked_comments:
+          type: array
+          items:
+            type: integer
+      required:
+      - bio
+      - id
+      - liked_posts
+      - mail
+      - name
+      - password
+      - posts
+      - username
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
