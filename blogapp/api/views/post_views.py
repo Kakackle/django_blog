@@ -95,6 +95,7 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
         # if view request
         if views:
             serializer.save(views=views)
+            return
         if liked_by:
             new_liked_by = []
             for user in liked_by:
@@ -102,6 +103,10 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
                 new_liked_by.append(userN)
                 # FIXME: tutaj opisz w devnotes czemu tak
             serializer.save(liked_by=new_liked_by, likes=likes)
+            return
+        else:
+            serializer.save(liked_by=[], likes=0)
+            return
 
 # generics.CreateAPIView
 class PostCreateAPIView(viewsets.ModelViewSet):
