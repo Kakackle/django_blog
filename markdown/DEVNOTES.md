@@ -44,3 +44,12 @@ def perform_create(self, serializer):
 ```
 gdzie dodatkowo istnieje mozliwosc stworzenia nowego obiektu tak, bazą problemu jest natomiast tagL = get_object_or_404 i dodanie tablicy zawierajacej tagL do serializatora (jesli jest to tablica)
 
+
+# Nierozwiazywalne kwestie / wymagajace sporych zmian
+
+## Trending posts
+Wlasciwie nie jest aktualnie mozliwe zrealizowanie funkcjonalnosci trendujacych postow tak jak bym chcial, bo to wymagaloby sledzenia kiedy zostaly dodanie wyswietlenia i wziecie tylko tych z np ostatnich 30 dni - ale ja nie sledze tego w zaden sposob i troche to bez sensu, musialby lajk byc wlasnym modelem przechowujacym ta informacje
+
+Aktualny sposob czyli wynik dzielenia wysw / dni od postowania faworyzuje posty ktore beda mialy raz bardzo duzo wyswietlen a potem nic kontra posty z malo wyswietlen ale tylko w ostatnim czasie
+
+Aby to wyeliminowac moglbym dodatkowo filtrowac queryset pod tylko posty z ostatnich 30 dni etc, ale poki co ok
