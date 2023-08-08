@@ -20,51 +20,51 @@ class CommentListAPIView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     pagination_class = CustomPagination
 
-    @extend_schema(
-        request=CommentSerializer,
-        responses={200: CommentSerializer},
-        methods=['GET']
-    )
+    # @extend_schema(
+    #     request=CommentSerializer,
+    #     responses={200: CommentSerializer},
+    #     methods=['GET']
+    # )
 
 
-    @extend_schema(
-    # extra parameters added to the schema
-    parameters=[
-        OpenApiParameter(name='artist', description='Filter by artist', required=False, type=str),
-        OpenApiParameter(
-            name='release',
-            type=OpenApiTypes.DATE,
-            location=OpenApiParameter.QUERY,
-            description='Filter by release date',
-            examples=[
-                OpenApiExample(
-                    'Example 1',
-                    summary='short optional summary',
-                    description='longer description',
-                    value='1993-08-23'
-                ),
-                ...
-            ],
-        ),
-    ],
-    # override default docstring extraction
-    description='More descriptive text',
-    # provide Authentication class that deviates from the views default
-    auth=None,
-    # change the auto-generated operation name
-    operation_id=None,
-    # or even completely override what AutoSchema would generate. Provide raw Open API spec as Dict.
-    operation=None,
-    # attach request/response examples to the operation.
-    examples=[
-        OpenApiExample(
-            'Example 1',
-            description='longer description',
-            value=...
-        ),
-        ...
-    ],
-    )
+    # @extend_schema(
+    # # extra parameters added to the schema
+    # parameters=[
+    #     OpenApiParameter(name='artist', description='Filter by artist', required=False, type=str),
+    #     OpenApiParameter(
+    #         name='release',
+    #         type=OpenApiTypes.DATE,
+    #         location=OpenApiParameter.QUERY,
+    #         description='Filter by release date',
+    #         examples=[
+    #             OpenApiExample(
+    #                 'Example 1',
+    #                 summary='short optional summary',
+    #                 description='longer description',
+    #                 value='1993-08-23'
+    #             ),
+    #             ...
+    #         ],
+    #     ),
+    # ],
+    # # override default docstring extraction
+    # description='More descriptive text',
+    # # provide Authentication class that deviates from the views default
+    # auth=None,
+    # # change the auto-generated operation name
+    # operation_id=None,
+    # # or even completely override what AutoSchema would generate. Provide raw Open API spec as Dict.
+    # operation=None,
+    # # attach request/response examples to the operation.
+    # examples=[
+    #     OpenApiExample(
+    #         'Example 1',
+    #         description='longer description',
+    #         value=...
+    #     ),
+    #     ...
+    # ],
+    # )
     def get_queryset(self):
         queryset = Comment.objects.all().order_by("-date_posted")
         post = self.request.query_params.get("post", None)
@@ -72,11 +72,11 @@ class CommentListAPIView(generics.ListCreateAPIView):
             queryset = queryset.filter(post__slug=post)
         return queryset
     
-    @extend_schema(description='Override a specific method', methods=["GET"])
-    #@action(detail=True, methods=['post', 'get'])
-    def test_method(self, request, pk=None):
-        # your action behaviour
-        pass
+    # @extend_schema(description='Override a specific method', methods=["GET"])
+    # #@action(detail=True, methods=['post', 'get'])
+    # def test_method(self, request, pk=None):
+    #     # your action behaviour
+    #     pass
     
     
 
@@ -129,3 +129,25 @@ class CommentDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializerSlug
     lookup_field = 'slug'
+
+    def patch(self, request, *args, **kwargs):
+        # print('update request data:', self.request.data)
+        return self.partial_update(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        print('update request data:', self.request.data)
+        # views = self.request.data.get('views')
+        likes = self.request.data.get('likes')
+        liked_by = self.request.data.getlist('liked_by[]')
+
+        if liked_by:
+            new_liked_by = []
+            for user in liked_by:
+                userN = get_object_or_404(User, slug=user)
+                new_liked_by.append(userN)
+                # FIXME: tutaj opisz w devnotes czemu tak
+            serializer.save(liked_by=new_liked_by, likes=likes)
+            return
+        else:
+            serializer.save(liked_by=[], likes=0)
+            return

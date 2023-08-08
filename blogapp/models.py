@@ -107,7 +107,7 @@ class Comment(models.Model):
     Comment object for posts, multiple on one post, one user author
     replies allowed, both as parent and children
     """
-    content = models.TextField()
+    content = models.TextField(max_length=500)
     author = models.ForeignKey(User,
                              on_delete=models.CASCADE,
                              related_name="comments")

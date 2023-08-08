@@ -15,6 +15,14 @@ bo kwestia co usuwac powinna byc dosyc latwa - zanim zastapisz nowym, usun stare
 
 5. TODO: jakies resizowanie obrazkow przy uploadzie i zapisywanie w roznych rozmiarach typu thumbnail
 
+6. // FIXME: poki co zrobie tak ze we froncie sprawdzane czy juz polajkowane
+// i w zaleznosci od tego wyslij liste z nowym uzytnikiem albo bez jak juz byl
+// ale potem lepiej by to robic w django, bo to taka racej backendowa operacja
+// a frontent powinien byc glownie od wyswietlania a nie trzymania stanu
+
+7. TODO: Sprawdz czy jest obslugiwane zwracanie postow polubionych przez uzytkownika? w sensie post ma liked_by ale czy uzytownik ma liked_posts etc?
+
+
 # Duze rzeczy
 1. custom user / profile i logowanie
     - potem powiazywanie tworzonych postow z aktualnym uzytkownikiem itd
