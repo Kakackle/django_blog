@@ -53,6 +53,16 @@ class PostListAllAPIView(generics.ListCreateAPIView):
     serializer_class = PostSerializerSlug
     parser_classes = (MultiPartParser, FormParser)
 
+class PostListTrendingAPIView(generics.ListCreateAPIView):
+    # queryset = Post.objects.all()
+    def get_queryset(self):
+        # return super().get_queryset()
+        queryset = Post.objects.all().order_by("-trending_score")[:5]
+        return queryset
+        
+    serializer_class = PostSerializerSlug
+    parser_classes = (MultiPartParser, FormParser)
+
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer

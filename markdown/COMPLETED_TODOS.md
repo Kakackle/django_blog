@@ -1,0 +1,1 @@
+1. mozliwe jest i nawet latwe stworzenie wszystkich routes albo API schema z openAPI, kiedys by sie przydalo tym zajac, potem swagger itd

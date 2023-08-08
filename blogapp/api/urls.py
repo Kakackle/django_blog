@@ -3,7 +3,8 @@ from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                ImagePostDetailAPIView, ImagePostListAPIView,
                                PostCreateAPIView, PostDetailAPIView,
                                PostDetailSlugAPIView, PostListAllAPIView,
-                               PostListAPIView, TagDetailAPIView,
+                               PostListAPIView, PostListTrendingAPIView,
+                               TagDetailAPIView,
                                TagDetailSlugAPIView, TagListAPIView,
                                UserDetailAPIView, UserDetailSlugAPIView,
                                UserListAPIView, post_image_view)
@@ -12,6 +13,7 @@ from django.urls import include, path
 urlpatterns = [
     path('posts/', PostListAPIView.as_view(), name="api_post_list"),
     path('posts/all/', PostListAllAPIView.as_view(), name="api_posts_list_all"),
+    path('posts/trending/', PostListTrendingAPIView.as_view(), name="api_posts_list_trending"),
     # path('posts/<int:pk>', PostDetailAPIView.as_view(), name="api_post_detail"),
     path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),
     # path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),

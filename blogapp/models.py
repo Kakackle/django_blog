@@ -1,5 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils import timezone
+import datetime
 class Tag(models.Model):
     """
     Tag object for posts, shared between posts
@@ -71,6 +73,7 @@ class Post(models.Model):
     # liked_by = models.JSONField(null=True)
     likes = models.IntegerField(default=0, blank=True)
     slug = models.SlugField(null=False, unique=True, default='temp')
+    trending_score = models.FloatField(default=0, blank=True)
 
     def __str__(self):
         return self.title
@@ -81,6 +84,8 @@ class Post(models.Model):
             self.slug = slugify(self.title)
         # if self.likes == 0 and self.liked_by:
         #     self.likes = self.liked_by.all().count()
+        delta = timezone.now().date() - self.date_posted 
+        self.trending_score = self.views / delta.days 
         return super().save(*args, **kwargs)
     
 class ImagePost(models.Model):

@@ -1,7 +1,6 @@
 # Django todos
 ## modele
 1. TODO: zamiast usera w pelni od zera, zrobic rozszerzenie modelu z django.contrib.auth?
-2. TODO: mozliwe jest i nawet latwe stworzenie wszystkich routes albo API schema z openAPI, kiedys by sie przydalo tym zajac, potem swagger itd
 
 ## endpointy i zwracanie informacji
 1. TODO: Powinien byc na 100% sposob zwracania informacji w response takich jak, ze np wybrana nazwa nie jest unique, co frontend by w response odbieral, co nie powinno byc trudne (bo axios zwraca obiekt res), ale kwestia jest jak sprawdzac w Django takie contraints i dodawac na tej bazie do response - nie powinno byc takie trudne, ale
@@ -20,7 +19,7 @@ bo kwestia co usuwac powinna byc dosyc latwa - zanim zastapisz nowym, usun stare
 // ale potem lepiej by to robic w django, bo to taka racej backendowa operacja
 // a frontent powinien byc glownie od wyswietlania a nie trzymania stanu
 
-7. TODO: Sprawdz czy jest obslugiwane zwracanie postow polubionych przez uzytkownika? w sensie post ma liked_by ale czy uzytownik ma liked_posts etc?
+7. TODO: Jakos zwracanie liked_posts, liked_comments - jest teraz, ale kulawe, komenty np zwraca po indexach
 
 
 # Duze rzeczy
