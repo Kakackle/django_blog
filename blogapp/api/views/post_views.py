@@ -52,6 +52,8 @@ class PostListAllAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug
     parser_classes = (MultiPartParser, FormParser)
+    # content = {'message': 'you just got all posts'}
+    # return Response()
 
 class PostListTrendingAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all()

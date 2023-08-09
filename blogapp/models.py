@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 import datetime
 class Tag(models.Model):
     """
@@ -23,10 +24,14 @@ class Tag(models.Model):
 # Pozwoli sprecyzowac folder to ktorego beda uploadowane obrazki zamiast
 # Ogolnego sprecyzowanego w settings
 def upload_to_avatar(instance, filename):
-    return 'images/avatars/{filename}'.format(filename=filename)
+    random_str = get_random_string(length=8)
+    return 'images/avatars/{filename}-{random}'.format(
+        filename=filename, random=random_str)
 
 def upload_to_cover(instance, filename):
-    return 'images/covers/{filename}'.format(filename=filename)
+    random_str = get_random_string(length=8)
+    return 'images/covers/{filename}'.format(
+        filename=filename, random=random_str)
 
 class User(models.Model):
     """
@@ -84,14 +89,17 @@ class Post(models.Model):
             self.slug = slugify(self.title)
         # if self.likes == 0 and self.liked_by:
         #     self.likes = self.liked_by.all().count()
-        delta = timezone.now().date() - self.date_posted 
-        self.trending_score = self.views / delta.days 
+        delta = timezone.now().date() - self.date_posted
+        delta_days = delta.days if delta.days > 0 else 1
+        self.trending_score = self.views / delta_days; 
         return super().save(*args, **kwargs)
     
 class ImagePost(models.Model):
 
     def image_dir(self, filename):
-        return 'images/{post}/{filename}'.format(filename=self.name, post=self.post.slug)
+        random_str = get_random_string(length=8)
+        return 'images/{post}/{filename}-{random}'.format(
+            filename=self.name, post=self.post.slug, random=random_str)
 
     name = models.CharField(max_length=255)
     post = models.ForeignKey(Post, on_delete=models.CASCADE,
