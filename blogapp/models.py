@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 import datetime
+from PIL import Image
 class Tag(models.Model):
     """
     Tag object for posts, shared between posts
@@ -89,9 +90,43 @@ class Post(models.Model):
             self.slug = slugify(self.title)
         # if self.likes == 0 and self.liked_by:
         #     self.likes = self.liked_by.all().count()
-        delta = timezone.now().date() - self.date_posted
+
+        # gdyby z jakiegos powodu data przyszla w postaci string,
+        # trzeba ja przekonwertowac w celu kalkulacji
+        # - jesli w popranym formacie to nie
+        if isinstance(self.date_posted, datetime.date):
+            delta = timezone.now().date() - self.date_posted
+        else:
+            date_posted_date = datetime.datetime.strptime(
+                self.date_posted, "%Y-%m-%d").date()
+            delta = timezone.now().date() - date_posted_date
         delta_days = delta.days if delta.days > 0 else 1
         self.trending_score = self.views / delta_days; 
+
+        # FIXME: nie mozemy tak robic, poniewaz z jakiegos powodu self.img.path prowadzi do
+        # /uploads/tutaj a nie tak jak jest ustawione w upload_to
+        # jakos by trzeba odczytac moze filename i tutaj wykorzystac?
+
+        # musi to miec zwiazek z tym, ze domyslny path jest bezposrednio w uploads
+        # a upload_to aplikowane jest dopiero wraz z procesem save()
+        # co nastepuje po pobraniu path tutaj
+        # problemem tez jest ze wykorzystujemy w upload_to losowy string
+        # trzeba by tutaj zrobic jakis overload upload_to i po dokonaniu go dokonywac resize
+
+        #if (self.img):
+        #    print(self.img.url) - rowniez nie dziala
+
+        #======== img resize - optimization purposes ========
+        # if(self.img):
+        #     # img = Image.open(self.img.path)
+        #     img = Image.open(self.img.url)
+        #     max_width = 2400 # 1200*2
+        #     max_height = 1600 # 800 *2, idk
+        #     ratio = min(max_width/img.width, max_height/img.height)
+        #     size = img.size * ratio
+        #     img.thumbnail(size)
+        #     img.save(self.img.path)
+
         return super().save(*args, **kwargs)
     
 class ImagePost(models.Model):

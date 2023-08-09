@@ -8,4 +8,11 @@
 bo kwestia co usuwac powinna byc dosyc latwa - zanim zastapisz nowym, usun stare/aktualne, hmm
 
 odp: rozne sposoby:
-https://stackoverflow.com/questions/2878490/how-to-delete-old-image-when-update-imagefield
+- https://stackoverflow.com/questions/2878490/how-to-delete-old-image-when-update-imagefield
+
+5. jakies resizowanie obrazkow przy uploadzie i zapisywanie w roznych rozmiarach typu thumbnail - jakos z PIL, widzialem ze to dziala, w section.io np
+
+odp:
+- https://www.section.io/engineering-education/an-extensive-guide-on-handling-images-in-django/
+- https://stackoverflow.com/questions/273946/how-do-i-resize-an-image-using-pil-and-maintain-its-aspect-ratio
+

@@ -18,11 +18,38 @@ class PostListAPIView(generics.ListCreateAPIView):
     # search_fields = ["title"]
     def get_queryset(self):
         queryset = Post.objects.all().order_by("-id")
+
+        
+        # dodatkowe filtracje
+        liked_by = self.request.query_params.get("liked_by", None)
+        own = self.request.query_params.get("own", None)
+        commented = self.request.query_params.get("commented", None)
+        followed = self.request.query_params.get("followed", None)
+        if liked_by:
+            # wymaga przeslania slugu zalogowanego uzytkownika
+            print('liked_by:', liked_by)
+            user = User.objects.get(slug=liked_by)
+            print('user:', user)
+            print('liked_posts:', user.liked_posts.all())
+            queryset = user.liked_posts.all()
+            print('qs:', queryset)
+        if own:
+            print('own:', own)
+            queryset = queryset.filter(author__username=own)
+        if commented:
+            #TODO: tak samo - przeslania zalogowanego ale i jak zrealizowac te funkcjonalnosc?
+            pass
+        if followed:
+            #same
+            pass
+
+
         author = self.request.query_params.get("author", None)
         # tag = self.request.query_params.get("tag", None)
         tags = self.request.query_params.getlist("tag", None)
         # print("tags:",tags)
         title = self.request.query_params.get("title", None)
+
         if author is not None:
             # queryset = queryset.filter(author__name__icontains=author)
             queryset = queryset.filter(author__username=author)
@@ -32,6 +59,8 @@ class PostListAPIView(generics.ListCreateAPIView):
             print('len: ', queryset.__len__())
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
+
+
         # Ordering?
         ordering = self.request.query_params.get("ordering", None)
         if ordering:
@@ -42,8 +71,10 @@ class PostListAPIView(generics.ListCreateAPIView):
             if ordering == "views":
                 queryset = queryset.order_by("-views")
             if ordering == "likes":
-                queryset = queryset.order_by("-likes")    
+                queryset = queryset.order_by("-likes")   
         return queryset
+    
+
         # TODO: sprobuj tak jak autora zobaczy te tagi po slugach?
         # moze powinno dzialac, bo to __name, __in itd to jakies sprytne jest, nie wiem
 
