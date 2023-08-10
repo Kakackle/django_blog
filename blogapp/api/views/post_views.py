@@ -1,13 +1,13 @@
 from blogapp.api.pagination import CustomPagination
 from blogapp.api.serializers import (PostSerializer, PostSerializerCreate,
-                                     PostSerializerSlug)
-from blogapp.models import Post, Tag, User
+                                     PostSerializerSlug, UserSerializerSlug)
+from blogapp.models import Post, Tag, User, Comment, Following
 from django.template.defaultfilters import slugify
 from rest_framework import generics, status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
-
+from datetime import datetime, timedelta
 
 class PostListAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all()
@@ -37,18 +37,20 @@ class PostListAPIView(generics.ListCreateAPIView):
             print('own:', own)
             queryset = queryset.filter(author__username=own)
         if commented:
-            #TODO: tak samo - przeslania zalogowanego ale i jak zrealizowac te funkcjonalnosc?
-            pass
+            # user = User.objects.get(slug=commented)
+            queryset = queryset.filter(comments__author=commented).distinct()
+            print('commented qs: ', queryset)
         if followed:
-            #same
-            pass
-
+            followed_users = Following.objects.filter(following_user=followed).values_list('user', flat=True)
+            queryset = queryset.filter(author__slug__in=followed_users)
+            print('followed qs:', queryset)
 
         author = self.request.query_params.get("author", None)
         # tag = self.request.query_params.get("tag", None)
         tags = self.request.query_params.getlist("tag", None)
         # print("tags:",tags)
         title = self.request.query_params.get("title", None)
+        days = self.request.query_params.get("days", None)
 
         if author is not None:
             # queryset = queryset.filter(author__name__icontains=author)
@@ -59,7 +61,9 @@ class PostListAPIView(generics.ListCreateAPIView):
             print('len: ', queryset.__len__())
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
-
+        if days is not None:
+            date_limit = datetime.today() - timedelta(days=int(days))
+            queryset = queryset.filter(date_posted__gte=date_limit)
 
         # Ordering?
         ordering = self.request.query_params.get("ordering", None)
@@ -95,6 +99,24 @@ class PostListTrendingAPIView(generics.ListCreateAPIView):
         
     serializer_class = PostSerializerSlug
     parser_classes = (MultiPartParser, FormParser)
+
+
+class FollowedAPIView(generics.ListCreateAPIView):
+    # queryset = User.objects.all()
+    serializer_class = PostSerializerSlug
+    parser_classes = (MultiPartParser, FormParser)
+    lookup_field = 'slug'
+    def get_queryset(self):
+        queryset = Post.objects.all().order_by("-id")
+        by_user = self.request.query_params.get("by_user", None)
+        print('by_user ', by_user)
+        followed = Following.objects.filter(following_user=by_user).values_list('user', flat=True)
+        # user = User.objects.get(slug=by_user)
+        # followed = user.followed.all().values_list('user', flat=True)
+        print('followed: ', followed)
+        queryset = Post.objects.filter(author__slug__in=followed)
+        return queryset
+        # return super().get_queryset()
 
 class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
@@ -150,6 +172,22 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
         else:
             serializer.save(liked_by=[], likes=0)
             return
+
+# proby rozbijania views na wiecej mniejszych single-purpose endpointow
+class PostViewAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializerSlug
+    lookup_field = 'slug'
+
+    def patch(self, request, *args, **kwargs):
+        # print('update request data:', self.request.data)
+        return self.partial_update(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        print('update request data:', self.request.data)
+        views = Post.objects.get(slug=self.kwargs.get("slug")).views
+        views += 1
+        serializer.save(views=views)
 
 # generics.CreateAPIView
 class PostCreateAPIView(viewsets.ModelViewSet):

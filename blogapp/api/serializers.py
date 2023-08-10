@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from blogapp.models import Post, Tag, User, Comment, ImagePost
+from blogapp.models import Post, Tag, User, Comment, ImagePost, Following
 from datetime import datetime
 
 class TagSerializer(serializers.ModelSerializer):
@@ -41,17 +41,30 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
+        lookup_field = 'slug'
+
+class FollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Following
+        fields = "__all__"
 
 class UserSerializerSlug(serializers.ModelSerializer):
     # posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
     liked_posts = serializers.SlugRelatedField(many=True, read_only=True, slug_field = 'slug')
+
+    #followed_by = serializers.StringRelatedField(many=True, read_only=True)
+    followed = serializers.SlugRelatedField(many=True, read_only=True, slug_field='slug')
+    followed_by = serializers.SlugRelatedField(many=True, read_only=True,
+                                                slug_field='slug')
     
     avatar = serializers.ImageField(required=False)
     class Meta:
         model = User
         fields = "__all__"
         lookup_field = 'slug'
+
+
 
 # class subCommentSerializer(serializers.ModelSerializer):
 #     author = serializers.PrimaryKeyRelatedField(read_only=True,
@@ -75,6 +88,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = "__all__"
+        lookup_field = 'slug'
 
     def get_fields(self):
         fields = super(CommentSerializer, self).get_fields()
@@ -82,7 +96,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return fields
 
 class CommentSerializerSlug(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(read_only=True,)
+    # author = serializers.PrimaryKeyRelatedField(read_only=True,)
+    author = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     parent = serializers.PrimaryKeyRelatedField(read_only=True)
     # children = subCommentSerializer(many=True)
     class Meta:

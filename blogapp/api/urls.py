@@ -7,7 +7,12 @@ from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                TagDetailAPIView,
                                TagDetailSlugAPIView, TagListAPIView,
                                UserDetailAPIView, UserDetailSlugAPIView,
-                               UserListAPIView, post_image_view)
+                               UserListAPIView, FollowingAPIView,
+                               FollowedAPIView,
+                               post_image_view, followed_view,
+                               followed_by_view, add_to_follows,
+                               FollowAPIView, remove_from_follows,
+                               PostViewAPIView)
 from django.urls import include, path
 
 urlpatterns = [
@@ -17,6 +22,8 @@ urlpatterns = [
     # path('posts/<int:pk>', PostDetailAPIView.as_view(), name="api_post_detail"),
     path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),
     # path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),
+    path('posts/followed/', FollowedAPIView.as_view(), name='api_followed_posts'),
+    path('posts/<slug:slug>/view', PostViewAPIView.as_view(), name="api_post_viewed"),
 
 
     path('tags/', TagListAPIView.as_view(), name="api_tag_list"),
@@ -27,7 +34,15 @@ urlpatterns = [
     path('users/<int:pk>', UserDetailAPIView.as_view(), name="api_user_detail"),
     path('users/<slug:slug>', UserDetailSlugAPIView.as_view(), name="api_user_detail_slug"),
     path('users/<int:user_pk>/post', PostCreateAPIView.as_view({'get': 'list'}), name="api_post_create"),
-    
+    path('users/<slug:slug>/followed/', followed_view, name='followed_view'),
+    path('users/<slug:slug>/followed_by/', followed_by_view, name='followed_by_view'),
+
+    # path('users/<slug:slug>/follow', FollowAPIView.as_view(), name='add_to_follows_view'),
+    path('users/<slug:slug>/follow', add_to_follows, name='add_to_follows_view'),
+    path('users/<slug:slug>/unfollow', remove_from_follows, name='remove_from_follows_view'),
+
+    path('following/', FollowingAPIView.as_view(), name='api_following_list'),
+
     path('comments/', CommentListAPIView.as_view(), name="api_comment_list"),
     path('comments/<int:pk>', CommentDetailAPIView.as_view(), name="api_comment_detail"),
     path('comments/<slug:slug>', CommentDetailSlugAPIView.as_view(), name="api_comment_detail_slug"),

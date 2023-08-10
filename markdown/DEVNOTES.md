@@ -53,3 +53,37 @@ Wlasciwie nie jest aktualnie mozliwe zrealizowanie funkcjonalnosci trendujacych 
 Aktualny sposob czyli wynik dzielenia wysw / dni od postowania faworyzuje posty ktore beda mialy raz bardzo duzo wyswietlen a potem nic kontra posty z malo wyswietlen ale tylko w ostatnim czasie
 
 Aby to wyeliminowac moglbym dodatkowo filtrowac queryset pod tylko posty z ostatnich 30 dni etc, ale poki co ok
+
+
+# Wazne notatki na przyszosc jak robic rzeczy
+
+## Odnosnie relacji miedzy modelami
+
+Jesli masz ustawione realacje miedzy modelami, w polach typu ForeignKey ustawic mozesz parametr **to_field** wskazujacy po jakim polu ma wiazac relacje. Domylnie bedzie to id, jednak dla wygody mozesz zmienic np na slug, dzieki czemu jesli w serializatorach tez bedziesz poslguiwac sie **SlugRelatedFields**, mozesz uzyskac spojnosc w calym programie.
+
+Mianowicie: nawet jesli dla serializatorow ustawisz related_field = 'slug', to Django pobierajac dane z DB, na przyklad robiac Query, nadal moze chciec sprawdzac warunki po id (bo tak jest domylnie).
+
+Czemu wazne myslec o tym od razu: bo potem zmiana wymagalaby usuniecia wszystkich komentarzy i zrobienia na nowo, gdyz tablica bedzie miala pole foreignKey odpowiadajace ID uzytkownikow, co kompletnie nie bedzie zgadzalo sie z polem slug itp i kompletnie sie to dusi nawet przy probach usuwania
+
+## Odnosnie serializatorow i odnoszenia sie do odwrotnych relacji i checi zwracania wszystkiego w jednym view
+
+Czasem sa problemy ze zwracaniem pol ktore wydaje sie powinienes byc w stanie zwracac z pomoca related_name
+
+Przykladowo przy tworzeniu funkcjonalnosci uzytkownikow followujacych innych uzytkownikow
+- poniewaz jest to relacja self, wartosciowa opcja moze byc stworzenie oddzielnego modelu tworzacego te relacje poprzez odnoszenie sie dwokrotnie do modelu uzytkownika
+
+https://stackoverflow.com/questions/58794639/how-to-make-follower-following-system-with-django-model
+
+
+problemem wtedy jednak: jakos by moze z serializatoram sie to zrobilo, ale generalnie mimo related_name, pola z tego nowego modelu zarzadzajacego nie sa defacto czescia modelu uzytkownika, tylko tego nowego modelu.
+
+Tzn. chcac uzyskac informacje o tych relacjach, musisz odniesc sie do tego modelu.
+
+Jesli chcesz wykorzystac te informacje do pobrania np. postów zwiazanych z użytkownikami z modelu followers, musisz je zatem z niego wyciągnąć i potem przekazać jakoś w celu wyciągniecia informacji o postach z modelu i serializatora **związanego z postem**
+
+bo oczywiscie - zeby view z serializatorem zwrocil ci posty, musisz uzyc serializatorow postow, a nie uzytkownikow czy followerow jako ten glowny, one jedynie pomocne
+
++ sposoby na wyciaganie values z querysetu:
+https://stackoverflow.com/questions/48606087/getting-values-of-queryset-in-django
+
++ wiele malych specyficznych view nie jest problemem, a wrecz lepsze od duzych skomplikowanych ktorych nie rozumiesz a ktore zwracaja "wszystko"

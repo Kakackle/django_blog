@@ -58,6 +58,29 @@ class User(models.Model):
         if self.slug == 'temp':
             self.slug = slugify(self.username)
         return super().save(*args, **kwargs)
+    
+class Following(models.Model):
+    user = models.ForeignKey("User", related_name="followed", to_field='slug',
+                             on_delete=models.CASCADE)
+    following_user = models.ForeignKey("User", related_name="followed_by",
+                                       on_delete=models.CASCADE, to_field='slug')
+    date_followed = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(null=False, unique=True, default='temp')
+    
+    def __str__(self):
+        return self.following_user.slug + ' followed ' + self.user.slug
+    
+    class Meta:
+            constraints = [
+                models.UniqueConstraint(
+                    fields=["user", "following_user"], name="unique_following_relation"
+                )
+            ]
+
+    def save(self, *args, **kwargs):
+        if self.slug == 'temp':
+            self.slug = slugify(self.following_user.slug + ' followed ' + self.user.slug)
+        return super().save(*args, **kwargs)
 
 class Post(models.Model):
     """
@@ -101,7 +124,7 @@ class Post(models.Model):
                 self.date_posted, "%Y-%m-%d").date()
             delta = timezone.now().date() - date_posted_date
         delta_days = delta.days if delta.days > 0 else 1
-        self.trending_score = self.views / delta_days; 
+        self.trending_score = int(self.views) / delta_days; 
 
         # FIXME: nie mozemy tak robic, poniewaz z jakiegos powodu self.img.path prowadzi do
         # /uploads/tutaj a nie tak jak jest ustawione w upload_to

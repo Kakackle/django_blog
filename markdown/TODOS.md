@@ -14,19 +14,23 @@
 // i w zaleznosci od tego wyslij liste z nowym uzytnikiem albo bez jak juz byl
 // ale potem lepiej by to robic w django, bo to taka racej backendowa operacja
 // a frontent powinien byc glownie od wyswietlania a nie trzymania stanu
+- do zrobienia w sposob zlizony do dodawania i usuwania following
 
-7. TODO: Jakos zwracanie liked_posts, liked_comments - jest teraz, ale kulawe, komenty np zwraca po indexach zamiast w wyswietlalnej formie
-- luj tam, jest okej, tylko mozna by dodac warunki typu "zwroc tylko polubione posty", "zwroc tylko wlasne posty", "posty na ktorych uzytkownik skomentowal"
+7. TODO: moze zacznij proby rozbijania od /view zwiekszajacego views zamiast we froncie
 
 
-8. TODO: Filtracja postow po dacie
+9. OPTIONAL: post list view - specjalne tryby filtracji - moze mozna by zalogowanego uzytkownika przesylac w body albo gdzies oddzielnie w query, i potem kazda metoda mogla z tego korzystac, a nie ze kazda metoda podaje sama, bo to zbyteczne troche
+
 
 # Duze rzeczy
 1. custom user / profile i logowanie
     - potem powiazywanie tworzonych postow z aktualnym uzytkownikiem itd
     - komentarze - sposob powiazania w django i odpowiadania i forma na tworzenie
 
-2. TODO: Followowanie uzytkownikow
+3. TODO: REFACTOR ENDPOINTÓW / VIEWS - rozbicie na mniejsze, intuicyjne, one purpose, np. dla postów, oddzielne /view, /like, /unlike i inne, zwykly z query, /all, /szczegolne warunki
+
+4. TODO: usuniecie zbednych views, w szczegolnosci duplikacja po ID i po slug, bo sie openschema denerwowalo i sam sie mylisz
+
 
 ## cleanup
 1. Rozdzielenie views, serializatorow itd na pliki?
