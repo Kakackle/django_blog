@@ -18,6 +18,7 @@
 
 7. TODO: moze zacznij proby rozbijania od /view zwiekszajacego views zamiast we froncie
 
+8. TODO: zwracanie liczby followowers w obie strony - jakos w modelu czy tylko w view?
 
 9. OPTIONAL: post list view - specjalne tryby filtracji - moze mozna by zalogowanego uzytkownika przesylac w body albo gdzies oddzielnie w query, i potem kazda metoda mogla z tego korzystac, a nie ze kazda metoda podaje sama, bo to zbyteczne troche
 

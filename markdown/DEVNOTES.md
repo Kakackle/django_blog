@@ -65,6 +65,23 @@ Mianowicie: nawet jesli dla serializatorow ustawisz related_field = 'slug', to D
 
 Czemu wazne myslec o tym od razu: bo potem zmiana wymagalaby usuniecia wszystkich komentarzy i zrobienia na nowo, gdyz tablica bedzie miala pole foreignKey odpowiadajace ID uzytkownikow, co kompletnie nie bedzie zgadzalo sie z polem slug itp i kompletnie sie to dusi nawet przy probach usuwania
 
+### Nested writable serializer
+zeby znalezc uzytkownikow lubiacych post, poniewaz liked_comments jest polem uzytkownika, musialbym wziac uzytkownikow, przefiltrowac po id komentu rownego tego co w endpoincie (kwargs) i zwrocic z tego uzytkownikow a nastepnie dodawac lub usuwac na tym
+
+Ale czy serio nie da sie tego lepiej zrobic? brzmi jak powinno, to zbyt czesta operacja
+
+- no i robie to, bo przesylam cale liked_by i serializator rozumie, ale wymaga to ode mnie wpierw pobrania, zmodyfikowania i odeslania a ja bym chcial bez pobierania, zeby wszystko bylo na backu
+
+------
+
+okej, chyba rozumiem czemu takie problemy, a czemu stworzenie oddzielnego modelu na relacje bylo tak wygodne
+- bo standardowym zachowaniem z serializatorami jest tworzenie obiektow, w ktorych jesli chcesz podac jakas wartosc pola (nawet jesli to jest pole stanowiace relacje), po prostu podajesz te wartosci i serializator rozumie to i przypisuje
+
+natomiast opercja którą my chcemy wykonywac, to DOPISYWANIE do pola, czyli dosyc niestandardowa, wymaga nie tylko zapisania, ale odczytania aktualnej i nastepnie dopisania i zapisania tego nowego stanu
+
+w takich sytuacjach, DRF rekomenduje tzw. writable nested serializers, czyli nested serializatory z dodatkowymi metodami create i update w serialiatorze, mogacymi obslugiwac customowe sposoby zapisywania:
+https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers
+
 ## Odnosnie serializatorow i odnoszenia sie do odwrotnych relacji i checi zwracania wszystkiego w jednym view
 
 Czasem sa problemy ze zwracaniem pol ktore wydaje sie powinienes byc w stanie zwracac z pomoca related_name

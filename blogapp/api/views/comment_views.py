@@ -5,6 +5,7 @@ from rest_framework import generics, status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
+from django.http import HttpResponse, JsonResponse
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
@@ -125,6 +126,12 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+# wgl tu mamy napisane to wszystko a nigdy w to nie wchodzimy
+# bo endpoint wchodzi w endpoint po ID
+# czyli ten wyzej
+# a jednak zmiana ustawiajaca na 0 i [] miala efekt mi sie wydawalo...
+# wtf...
+
 class CommentDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializerSlug
@@ -146,8 +153,45 @@ class CommentDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
                 userN = get_object_or_404(User, slug=user)
                 new_liked_by.append(userN)
                 # FIXME: tutaj opisz w devnotes czemu tak
+                # generalnie: odbiera z frontu tablice slugow czyli str
+                # a nastepnie na podstawie str tworzy pelne obiekty
+                # ktore nastepnie zapisuje w modelu/obiekcie
+                # o relacji to many przyjmujacej taka tablice obiektow
             serializer.save(liked_by=new_liked_by, likes=likes)
             return
         else:
             serializer.save(liked_by=[], likes=0)
             return
+        
+class CommentLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def patch(self, request, *args, **kwargs):
+        # print('update request data:', self.request.data)
+        return self.partial_update(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        # print('update request data:', self.request.data)
+        comment = Comment.objects.get(pk=self.kwargs.get('pk'))
+        comment_pk = comment.pk
+        # uzytkownicy, ktorzy w polubionych komentach maja comment_pk
+        liked_by = list(User.objects.filter(liked_comments=comment_pk).values_list(
+            'id', flat=True))
+        
+        new_user = int(self.request.data.get('user'))
+        if new_user not in liked_by:
+            liked_by.append(new_user)
+            likes = len(liked_by)
+            serializer.save(liked_by=liked_by, likes=likes)
+            print('new liked_by: ', liked_by)
+            return JsonResponse({'liked_by': liked_by, 'message': 'added'},status=200)
+        else:
+            liked_by.remove(new_user)
+            likes = len(liked_by)
+            serializer.save(liked_by=liked_by, likes=likes)
+            print('old liked_by: ', liked_by)
+            return JsonResponse({'liked_by': liked_by, 'message': 'removed'},status=200)
+        # liked_by = comment.slug
+        print('users', liked_by)
+        pass

@@ -69,6 +69,12 @@ def remove_from_follows(request, slug):
     # user_followed_by.append(new_follower)
 
 
+# niewykorzystane - problem ponownie - zgodnosc querysetu i serializatora z tym
+# co chce zaktualizowac, zrobic
+# czyli tutaj chce na podstawie uzytkownika podanego w slug w endpoincie
+# zmienic relacje w modelu Following
+# i ostatecznie zrobilem to @api_view "recznie" poprzez tworzenie nowego rekordu
+# following albo usuwania
 class FollowAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = FollowingSerializer

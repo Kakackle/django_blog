@@ -1,5 +1,6 @@
 from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                CommentDetailSlugAPIView, CommentListAPIView,
+                               CommentLikeAPIView,
                                ImagePostDetailAPIView, ImagePostListAPIView,
                                PostCreateAPIView, PostDetailAPIView,
                                PostDetailSlugAPIView, PostListAllAPIView,
@@ -48,6 +49,7 @@ urlpatterns = [
     path('comments/<slug:slug>', CommentDetailSlugAPIView.as_view(), name="api_comment_detail_slug"),
     path('create_comment', CommentCreateAPIView.as_view({'get': 'list'}),
           name="api_comment_create"),
+    path('comments/<int:pk>/like', CommentLikeAPIView.as_view(), name="api_comment_like"),
 
     path('image/<slug:slug>', post_image_view, name='post_image_view'),
     path('posts/<slug:slug>/images', ImagePostListAPIView.as_view(), name="api_post_images"),
