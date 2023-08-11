@@ -13,7 +13,7 @@ from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                post_image_view, followed_view,
                                followed_by_view, add_to_follows,
                                FollowAPIView, remove_from_follows,
-                               PostViewAPIView)
+                               PostViewAPIView, PostLikeAPIView)
 from django.urls import include, path
 
 urlpatterns = [
@@ -25,6 +25,7 @@ urlpatterns = [
     # path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),
     path('posts/followed/', FollowedAPIView.as_view(), name='api_followed_posts'),
     path('posts/<slug:slug>/view', PostViewAPIView.as_view(), name="api_post_viewed"),
+    path('posts/<slug:slug>/like', PostLikeAPIView.as_view(), name="api_post_like"),
 
 
     path('tags/', TagListAPIView.as_view(), name="api_tag_list"),

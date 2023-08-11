@@ -137,31 +137,30 @@ class CommentDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializerSlug
     lookup_field = 'slug'
 
-    def patch(self, request, *args, **kwargs):
-        # print('update request data:', self.request.data)
-        return self.partial_update(request, *args, **kwargs)
+    # def patch(self, request, *args, **kwargs):
+    #     # print('update request data:', self.request.data)
+    #     return self.partial_update(request, *args, **kwargs)
     
-    def perform_update(self, serializer):
-        print('update request data:', self.request.data)
-        # views = self.request.data.get('views')
-        likes = self.request.data.get('likes')
-        liked_by = self.request.data.getlist('liked_by[]')
+    # def perform_update(self, serializer):
+    #     print('update request data:', self.request.data)
+    #     # views = self.request.data.get('views')
+    #     likes = self.request.data.get('likes')
+    #     liked_by = self.request.data.getlist('liked_by[]')
 
-        if liked_by:
-            new_liked_by = []
-            for user in liked_by:
-                userN = get_object_or_404(User, slug=user)
-                new_liked_by.append(userN)
-                # FIXME: tutaj opisz w devnotes czemu tak
-                # generalnie: odbiera z frontu tablice slugow czyli str
-                # a nastepnie na podstawie str tworzy pelne obiekty
-                # ktore nastepnie zapisuje w modelu/obiekcie
-                # o relacji to many przyjmujacej taka tablice obiektow
-            serializer.save(liked_by=new_liked_by, likes=likes)
-            return
-        else:
-            serializer.save(liked_by=[], likes=0)
-            return
+    #     if liked_by:
+    #         new_liked_by = []
+    #         for user in liked_by:
+    #             userN = get_object_or_404(User, slug=user)
+    #             new_liked_by.append(userN)
+    #             # generalnie: odbiera z frontu tablice slugow czyli str
+    #             # a nastepnie na podstawie str tworzy pelne obiekty
+    #             # ktore nastepnie zapisuje w modelu/obiekcie
+    #             # o relacji to many przyjmujacej taka tablice obiektow
+    #         serializer.save(liked_by=new_liked_by, likes=likes)
+    #         return
+    #     else:
+    #         serializer.save(liked_by=[], likes=0)
+    #         return
         
 class CommentLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset=Comment.objects.all()

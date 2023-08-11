@@ -38,7 +38,6 @@ def followed_by_view(request, slug):
     followed_by = list(Following.objects.filter(user=slug).values_list('following_user', flat=True))
     return JsonResponse({'followed_by': followed_by})
 
-# FIXME: eh... problemy bez serializatorow - brak wiedzy
 @api_view(['GET', 'POST'])
 def add_to_follows(request, slug):
     new_follower = request.data.get('new_follower')

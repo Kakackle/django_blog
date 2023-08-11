@@ -8,6 +8,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from datetime import datetime, timedelta
+from django.http import HttpResponse, JsonResponse
 
 class PostListAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all()
@@ -146,9 +147,9 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         print('update request data:', self.request.data)
-        views = self.request.data.get('views')
-        likes = self.request.data.get('likes')
-        liked_by = self.request.data.getlist('liked_by[]')
+        # views = self.request.data.get('views')
+        # likes = self.request.data.get('likes')
+        # liked_by = self.request.data.getlist('liked_by[]')
 
         post_slug = Post.objects.get(slug=self.kwargs.get("slug")).slug
         # if title supplied in request - post edit request
@@ -157,23 +158,55 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
             slug = slugify(req_title)
             if(post_slug != slug):
                 serializer.save(slug=slug)
-        # if view request
-        if views:
-            serializer.save(views=views)
-            return
-        if liked_by:
-            new_liked_by = []
-            for user in liked_by:
-                userN = get_object_or_404(User, slug=user)
-                new_liked_by.append(userN)
-                # FIXME: tutaj opisz w devnotes czemu tak
-            serializer.save(liked_by=new_liked_by, likes=likes)
-            return
+        # # if view request
+        # if views:
+        #     serializer.save(views=views)
+        #     return
+        # if liked_by:
+        #     new_liked_by = []
+        #     for user in liked_by:
+        #         userN = get_object_or_404(User, slug=user)
+        #         new_liked_by.append(userN)
+        #     serializer.save(liked_by=new_liked_by, likes=likes)
+        #     return
+        # else:
+        #     serializer.save(liked_by=[], likes=0)
+        #     return
+
+class PostLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'slug'
+
+    def patch(self, request, *args, **kwargs):
+        # print('update request data:', self.request.data)
+        return self.partial_update(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        # print('update request data:', self.request.data)
+        # post wybrany przez endpoint
+        post = Post.objects.get(slug=self.kwargs.get('slug'))
+        post_pk = post.pk
+        # uzytkownicy, ktorzy w polubionych postach maja post_pk
+        liked_by = list(User.objects.filter(liked_posts=post_pk).values_list(
+            'id', flat=True))
+        
+        new_user = int(self.request.data.get('user'))
+        if new_user not in liked_by:
+            liked_by.append(new_user)
+            likes = len(liked_by)
+            serializer.save(liked_by=liked_by, likes=likes)
+            print('new liked_by: ', liked_by)
+            return JsonResponse({'liked_by': liked_by, 'message': 'added'},status=200)
         else:
-            serializer.save(liked_by=[], likes=0)
-            return
+            liked_by.remove(new_user)
+            likes = len(liked_by)
+            serializer.save(liked_by=liked_by, likes=likes)
+            print('old liked_by: ', liked_by)
+            return JsonResponse({'liked_by': liked_by, 'message': 'removed'},status=200)
 
 # proby rozbijania views na wiecej mniejszych single-purpose endpointow
+# dodawanie wyswietlen do postow prostym endpointem
 class PostViewAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug

@@ -1,4 +1,4 @@
-## TODO: Funkcja followersow
+## DONE: Funkcja followersow
 Tzn mozliwosc by uzytkownicy wchodzac na profil innego uzytkownika mogli kliknac "follow", co dodawaloby ich do listy przypisanej do uzytkownika dodajacego, dzieki ktorej pozniej mozna by na stronie blogu dac checkbox typu "only display posts by users you follow" + mozliwosc wyswietlania ich na liscie uzytkownikow ktorych followujesz itd
 
 Czego by to wymagalo?
@@ -31,7 +31,7 @@ Musialyby byc aktualizowane wraz z przychodzacymi requestami, tzn. jesli chodzi 
 Musialoby to byc wywolywane przy aktualizacji lajkow postu - przy okazji brany bylby uzytkownik i do dodawane byloby do jego liczby lajkow posiadanych
 
 
-### Co z usuwaniem lajkow??
+### DONE: Co z usuwaniem lajkow??
 Kilka kwestii:
 1. Wyswietlanie na froncie - lista uzytkownikow przez ktore jest polajkowane musialaby byc przesylana z postem (albo na nowym endpoincie typu /likes) i na froncie sprawdzane czy jest w tej liscie
 [ albo endpoint odbierajacy zalogowanego uzytkownika i sam sprawdzajacy i zwracajacy bool? maybe]
@@ -40,7 +40,7 @@ Kilka kwestii:
     1. Jesli byblby endpoint z cala lista, to mozna by na froncie usuwac z listy i przesylac patch - albo na sam post albo na tylko ten endpoint
     2. Jesli mamy endpoint typu /like odbierajacy uzytkownika, to czy nie moglby on przy wywolywaniu sprawdzac czy uzytkownik jest na liscie i jesli jest to usuwac, jak nie ma to dodawac? Moze
 
-+ TODO: modyfikacja wyswietlen? Bo aktualnie wyswietlenia robione sa tak, z kiedy ktokolwiek wchodzi na strone postu, do backendu wysylany jest patch aktualizujacy wyswietlenia, co wymaga, by najpierw je odebral, uaktualnil i przeslal spowrotem PATCH
++ DONE: modyfikacja wyswietlen? Bo aktualnie wyswietlenia robione sa tak, z kiedy ktokolwiek wchodzi na strone postu, do backendu wysylany jest patch aktualizujacy wyswietlenia, co wymaga, by najpierw je odebral, uaktualnil i przeslal spowrotem PATCH
 
 Jak by mozna to rozwiazac lepiej? 2 pomysly:
 1. endpoint na poscie ktory sam to aktualizuje (nie trzeba nic pobierac i przesylac), aktualizowany przy "dotknieciu", get
@@ -49,7 +49,7 @@ Jak by mozna to rozwiazac lepiej? 2 pomysly:
 jak? Moze przypisujac jakos do get requestu - i w wypadku takiego aktualizacja na bazie modelu/serializatora jakis .save()
 
 
-## TODO: Daty i filtracje
+## DONE: Daty i filtracje
 Juz to gdzies pisalem, ale
 
 Na froncie wyswietlanie jakies typu <1 week, <1 month itd, a na tle wysylaloby liczby typu 7, 31 itd odpowiadajce ilosci dni
