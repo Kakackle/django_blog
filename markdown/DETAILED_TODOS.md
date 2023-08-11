@@ -11,14 +11,21 @@ Czego by to wymagalo?
     - wez uzytkownika -> wez jego liste followowanych -> wez queryset gdzie autor postu in [ lista ] -> zwroc ofc
 
 
-## TODO: Wiecej zliczan
+## DONE: Wiecej zliczan
 Tzn:
-- ile jest postow z danym tagiem
-- postow uzytkownika
-- komentow na poscie,
-- ile uzytkownik ma komentow,
-- ile ma lajkow na postach,
-- ile ma lajkow na komentach,
+[x] ile jest postow z danym tagiem
+[x] postow uzytkownika
+[x] komentow na poscie,
+[x] ile uzytkownik ma komentow,
+[x] ile ma lajkow na postach,
+[x] ile ma lajkow na komentach,
+[x] ilu uzytkownikow sledzi
+[x] ilu uzytkownikow go sledzi
+
++ dodanie tego we froncie
+
++ Potencjalny problem: aktualnie obsluge zliczania postow ktore napisal uzytkownik zamierzam robic tak, ze beda dodawane wraz z dodawaniem postow, bo mam do tego specyficzny endpoint, a co z usuwaniem? musialbym zmodyfikowac w view metode delete zeby to tez robila? maybe
+
 
 Jak ogolnie dokonywac zliczen? Bo aktualnie tez robione jest lajkowaie w Vue - lajki przesylane sa w poscie, w Vue przy wykryciu eventu zwiekszane (tzn. dodawany uzytkownik do listy lajkujacych), ale tez zwiekszane  i przesylany patch - Ale jak to zrobic w Django?
 ### funkcjonalnosc lajkowania

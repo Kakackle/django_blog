@@ -112,6 +112,17 @@ class CommentCreateAPIView(viewsets.ModelViewSet):
         # print('author got')
         post = get_object_or_404(Post, slug=post)
         # print('post got')
+
+        #aktualizacja zliczen
+        author_object = User.objects.get(slug=self.request.data.get('author'))
+        author_object.comment_count +=1
+        author_object.save()
+
+        post_object = Post.objects.get(slug=self.request.data.get('post'))
+        post_object.comment_count +=1
+        post_object.save()
+
+
         if parent != 'no_parent':
             parent = get_object_or_404(Comment, pk=parent)
             # print('parent got')
@@ -125,6 +136,18 @@ class CommentCreateAPIView(viewsets.ModelViewSet):
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def delete(self, request, *args, **kwargs):
+        #aktualizacja zliczen
+        comment_object = Comment.objects.get(pk=self.kwargs.get('pk'))
+        author_object = User.objects.get(slug=comment_object.author.slug)
+        author_object.comment_count -=1
+        author_object.save()
+
+        post_object = Post.objects.get(slug=comment_object.post.slug)
+        post_object.comment_count -=1
+        post_object.save()
+        return self.destroy(request, *args, **kwargs)
 
 # wgl tu mamy napisane to wszystko a nigdy w to nie wchodzimy
 # bo endpoint wchodzi w endpoint po ID
@@ -183,12 +206,23 @@ class CommentLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
             liked_by.append(new_user)
             likes = len(liked_by)
             serializer.save(liked_by=liked_by, likes=likes)
+
+            #aktualizacja zliczen ile uzytkownik ma polubien na komentarzach
+            author_object = User.objects.get(slug=comment.author.slug)
+            author_object.comment_likes_received += 1
+            author_object.save()
+
             print('new liked_by: ', liked_by)
             return JsonResponse({'liked_by': liked_by, 'message': 'added'},status=200)
         else:
             liked_by.remove(new_user)
             likes = len(liked_by)
             serializer.save(liked_by=liked_by, likes=likes)
+            
+            author_object = User.objects.get(slug=comment.author.slug)
+            author_object.comment_likes_received -= 1
+            author_object.save()
+
             print('old liked_by: ', liked_by)
             return JsonResponse({'liked_by': liked_by, 'message': 'removed'},status=200)
         # liked_by = comment.slug

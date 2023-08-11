@@ -151,27 +151,37 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
         # likes = self.request.data.get('likes')
         # liked_by = self.request.data.getlist('liked_by[]')
 
-        post_slug = Post.objects.get(slug=self.kwargs.get("slug")).slug
+        # aktualizacja zliczen na tagach - moga sie zmienic w update
+        post_object = Post.objects.get(slug=self.kwargs.get("slug"))
+        tags = list(post_object.tags.all())
+        # print('tags: ', tags)
+        for tag in tags:
+            print('tag:', tag)
+            tag.post_count +=1
+            tag.save()
+
+        post_slug = post_object.slug
         # if title supplied in request - post edit request
         req_title = self.request.data.get("title")
         if req_title:
             slug = slugify(req_title)
             if(post_slug != slug):
                 serializer.save(slug=slug)
-        # # if view request
-        # if views:
-        #     serializer.save(views=views)
-        #     return
-        # if liked_by:
-        #     new_liked_by = []
-        #     for user in liked_by:
-        #         userN = get_object_or_404(User, slug=user)
-        #         new_liked_by.append(userN)
-        #     serializer.save(liked_by=new_liked_by, likes=likes)
-        #     return
-        # else:
-        #     serializer.save(liked_by=[], likes=0)
-        #     return
+    
+    # aktualizacja zliczania postow
+    def delete(self, request, *args, **kwargs):
+        post_object = Post.objects.get(slug=self.kwargs.get("slug"))
+        # aktualizacja ilosci postow utworzonych przez uzytkownika
+        author = post_object.author.slug
+        author_object = User.objects.get(slug=author)
+        author_object.post_count -= 1
+        author_object.save()
+        # aktualizacja ilosci postow z tagami
+        tags = list(post_object.tags.all())
+        for tag in tags:
+            tag.post_count -=1
+            tag.save()
+        return self.destroy(request, *args, **kwargs)
 
 class PostLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset=Post.objects.all()
@@ -196,12 +206,22 @@ class PostLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
             liked_by.append(new_user)
             likes = len(liked_by)
             serializer.save(liked_by=liked_by, likes=likes)
+
+            author_object = User.objects.get(slug=post.author.slug)
+            author_object.post_likes_received += 1
+            author_object.save()
+
             print('new liked_by: ', liked_by)
             return JsonResponse({'liked_by': liked_by, 'message': 'added'},status=200)
         else:
             liked_by.remove(new_user)
             likes = len(liked_by)
             serializer.save(liked_by=liked_by, likes=likes)
+
+            author_object = User.objects.get(slug=post.author.slug)
+            author_object.post_likes_received -= 1
+            author_object.save()
+
             print('old liked_by: ', liked_by)
             return JsonResponse({'liked_by': liked_by, 'message': 'removed'},status=200)
 
@@ -255,6 +275,21 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         # WAZNE: tutaj kwargs jest to czesc argumentow wbudowanych w path
         # prawdziwe dane z requestu sa oczywiscie w requescie
         user_pk = self.kwargs.get("user_pk")
+
+        #aktualizacja zliczania stworzonych przez uzytkownika postow
+        user_object = User.objects.get(pk=user_pk)
+        user_object.post_count +=1
+        user_object.save()
+
+        #aktualizacja zliczen postow z tagami - post jeszcze nie istnieje
+
+        # tags = list(post_object.tags.all())
+        # # print('tags: ', tags)
+        # for tag in tags:
+        #     print('tag:', tag)
+        #     tag.post_count +=1
+        #     tag.save()
+        
         tags = self.request.data.getlist('tags[]')
         img = self.request.data.get('img')
         print('img: ', img)
@@ -273,6 +308,10 @@ class PostCreateAPIView(viewsets.ModelViewSet):
             else:
                 tagL = get_object_or_404(Tag, name=tag)
             tagsList.append(tagL)
+        # aktualizacja zliczen ilosci postow z tagami
+        for tag in tagsList:
+            tag.post_count +=1
+            tag.save()
         author = get_object_or_404(User, pk=user_pk)
         date_posted = self.request.data.get('date_posted')
         serializer.save(author=author, tags=tagsList, date_posted=date_posted, img=img)

@@ -12,6 +12,7 @@ class Tag(models.Model):
     description = models.CharField(max_length=500)
     slug = models.SlugField(null=False, unique=True, default='temp')
     # slug = models.SlugField(default='tag', null=True)
+    post_count = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         return self.name
@@ -50,6 +51,13 @@ class User(models.Model):
     slug = models.SlugField(null=False, unique=True, default='temp')
     liked_posts = models.ManyToManyField('Post', related_name="liked_by", blank=True)
     liked_comments = models.ManyToManyField('Comment', related_name='liked_by', blank=True)
+    
+    post_likes_received = models.IntegerField(default=0, blank=True)
+    comment_likes_received = models.IntegerField(default=0, blank=True)
+    followed_count = models.IntegerField(default=0, blank=True)
+    followed_by_count = models.IntegerField(default=0, blank=True)
+    post_count = models.IntegerField(default=0, blank=True)
+    comment_count = models.IntegerField(default=0, blank=True)
     
     def __str__(self):
         return self.username
@@ -103,6 +111,7 @@ class Post(models.Model):
     likes = models.IntegerField(default=0, blank=True)
     slug = models.SlugField(null=False, unique=True, default='temp')
     trending_score = models.FloatField(default=0, blank=True)
+    comment_count = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         return self.title

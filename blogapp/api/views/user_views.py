@@ -40,15 +40,24 @@ def followed_by_view(request, slug):
 
 @api_view(['GET', 'POST'])
 def add_to_follows(request, slug):
+    # nowy uzytkownik ktory ma byc dodany - czyli ktorego strone widzimy
     new_follower = request.data.get('new_follower')
     new_follower_object = User.objects.get(slug=new_follower)
+    # uzytkownik ktory ma zaczac sledzic - czyli zalogowany
     user_object = User.objects.get(slug=slug)
     user_followed_by = list(Following.objects.filter(user=slug).values_list('following_user', flat=True))
+    # jesli uzytkownik chcialby sledzic siebie
     if new_follower == slug:
         return JsonResponse({'added_to_follows': False},status=400)
+    # jesli jeszcze nie ma podanego uzytkownika w sledzonych przez aktualnego
     if new_follower not in user_followed_by:
+        # uzytkownik wskazany otrzymuje nowego sledzacego
+        new_follower_object.followed_by_count += 1
+        new_follower_object.save()
+        # uzytkownik zalogowany otrzymuje nowego ktorego sledzi
+        user_object.followed_count += 1
+        user_object.save()
         Following.objects.create(user=user_object, following_user=new_follower_object)
-    # user_followed_by.append(new_follower)
         return JsonResponse({'added_to_follows': True},status=200)
     else:
         return JsonResponse({'added_to_follows': False},status=400)
@@ -61,6 +70,12 @@ def remove_from_follows(request, slug):
     user_followed_by = list(Following.objects
                             .filter(user=slug).values_list('following_user', flat=True))
     if follower in user_followed_by:
+        # uzytkownik wskazany otrzymuje nowego sledzacego
+        follower_object.followed_by_count -= 1
+        follower_object.save()
+        # uzytkownik zalogowany otrzymuje nowego ktorego sledzi
+        user_object.followed_count -= 1
+        user_object.save()
         Following.objects.filter(user=user_object, following_user=follower_object).delete()
         return JsonResponse({'removed_from_follows': True},status=200)
     else:

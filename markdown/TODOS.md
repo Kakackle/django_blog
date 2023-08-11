@@ -10,7 +10,7 @@
 - jest to kwestia wtedy jaka metoda ma byc wywolana, czy post czy get czy cokolwiek i overwrite (czy jak to tam w pythonie sie nazywa) jej i w response ktore zwraca dodanie poza data: serializer.data (pamietaj o serializacji!) cos typu msg: 'wiadomosc'
 
 Zatem: TODO: w lakich endpointach bys chcial to dodac i co konkretnie zwracac
-oraz kwestia gdy sa bledy
+oraz kwestia gdy sa bledy jak rozpoznawac
 
 6. DONE: poki co zrobie tak ze we froncie sprawdzane czy juz polajkowane
 i w zaleznosci od tego wyslij liste z nowym uzytnikiem albo bez jak juz byl
