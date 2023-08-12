@@ -119,22 +119,6 @@ class FollowedAPIView(generics.ListCreateAPIView):
         return queryset
         # return super().get_queryset()
 
-class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
-    def patch(self, request, *args, **kwargs):
-        # print('update request data:', self.request.data)
-        return self.partial_update(request, *args, **kwargs)
-
-    def perform_update(self, serializer):
-        # print('update request data:', self.request.data)
-        title = self.request.data.get("title")
-        slug = slugify(title)
-        # serializer.save(slug=slug)
-        serializer.save()
-
 class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug
@@ -256,9 +240,6 @@ class PostCreateAPIView(viewsets.ModelViewSet):
 
     def post(self, request, *args, **kwargs):
         print('self.request.data: ', self.request.data)
-        # user_pk = self.kwargs.get("user_pk")
-        # tags = self.request.data.get('tags')
-        # print('user_pk: ', user_pk, 'tags: ', tags)
         return self.create(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
@@ -271,24 +252,12 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         print('serializer.errors:', serializer.errors)
 
     def perform_create(self, serializer):
-        # print('self.request.data: ', self.request.data)
-        # WAZNE: tutaj kwargs jest to czesc argumentow wbudowanych w path
-        # prawdziwe dane z requestu sa oczywiscie w requescie
-        user_pk = self.kwargs.get("user_pk")
+        user_slug = self.kwargs.get("slug")
 
         #aktualizacja zliczania stworzonych przez uzytkownika postow
-        user_object = User.objects.get(pk=user_pk)
+        user_object = User.objects.get(slug=user_slug)
         user_object.post_count +=1
         user_object.save()
-
-        #aktualizacja zliczen postow z tagami - post jeszcze nie istnieje
-
-        # tags = list(post_object.tags.all())
-        # # print('tags: ', tags)
-        # for tag in tags:
-        #     print('tag:', tag)
-        #     tag.post_count +=1
-        #     tag.save()
         
         tags = self.request.data.getlist('tags[]')
         img = self.request.data.get('img')
@@ -312,7 +281,7 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         for tag in tagsList:
             tag.post_count +=1
             tag.save()
-        author = get_object_or_404(User, pk=user_pk)
+        author = get_object_or_404(User, slug=user_slug)
         date_posted = self.request.data.get('date_posted')
         serializer.save(author=author, tags=tagsList, date_posted=date_posted, img=img)
         # return super().perform_create(serializer)

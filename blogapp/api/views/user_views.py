@@ -12,11 +12,6 @@ class UserListAPIView(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     parser_classes = (MultiPartParser, FormParser)
 
-class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
 class UserDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

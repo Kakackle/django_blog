@@ -27,45 +27,6 @@ class CommentListAPIView(generics.ListCreateAPIView):
     #     methods=['GET']
     # )
 
-
-    # @extend_schema(
-    # # extra parameters added to the schema
-    # parameters=[
-    #     OpenApiParameter(name='artist', description='Filter by artist', required=False, type=str),
-    #     OpenApiParameter(
-    #         name='release',
-    #         type=OpenApiTypes.DATE,
-    #         location=OpenApiParameter.QUERY,
-    #         description='Filter by release date',
-    #         examples=[
-    #             OpenApiExample(
-    #                 'Example 1',
-    #                 summary='short optional summary',
-    #                 description='longer description',
-    #                 value='1993-08-23'
-    #             ),
-    #             ...
-    #         ],
-    #     ),
-    # ],
-    # # override default docstring extraction
-    # description='More descriptive text',
-    # # provide Authentication class that deviates from the views default
-    # auth=None,
-    # # change the auto-generated operation name
-    # operation_id=None,
-    # # or even completely override what AutoSchema would generate. Provide raw Open API spec as Dict.
-    # operation=None,
-    # # attach request/response examples to the operation.
-    # examples=[
-    #     OpenApiExample(
-    #         'Example 1',
-    #         description='longer description',
-    #         value=...
-    #     ),
-    #     ...
-    # ],
-    # )
     def get_queryset(self):
         queryset = Comment.objects.all().order_by("-date_posted")
         post = self.request.query_params.get("post", None)
@@ -78,12 +39,6 @@ class CommentListAPIView(generics.ListCreateAPIView):
     # def test_method(self, request, pk=None):
     #     # your action behaviour
     #     pass
-    
-    
-
-# class CommentListByPostSlugAPIView(generics.ListCreateAPIView):
-#     queryset = Comment.objects.all()
-#     serializer_class = CommentSerializer
 
 class CommentCreateAPIView(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -148,42 +103,6 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         post_object.comment_count -=1
         post_object.save()
         return self.destroy(request, *args, **kwargs)
-
-# wgl tu mamy napisane to wszystko a nigdy w to nie wchodzimy
-# bo endpoint wchodzi w endpoint po ID
-# czyli ten wyzej
-# a jednak zmiana ustawiajaca na 0 i [] miala efekt mi sie wydawalo...
-# wtf...
-
-class CommentDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializerSlug
-    lookup_field = 'slug'
-
-    # def patch(self, request, *args, **kwargs):
-    #     # print('update request data:', self.request.data)
-    #     return self.partial_update(request, *args, **kwargs)
-    
-    # def perform_update(self, serializer):
-    #     print('update request data:', self.request.data)
-    #     # views = self.request.data.get('views')
-    #     likes = self.request.data.get('likes')
-    #     liked_by = self.request.data.getlist('liked_by[]')
-
-    #     if liked_by:
-    #         new_liked_by = []
-    #         for user in liked_by:
-    #             userN = get_object_or_404(User, slug=user)
-    #             new_liked_by.append(userN)
-    #             # generalnie: odbiera z frontu tablice slugow czyli str
-    #             # a nastepnie na podstawie str tworzy pelne obiekty
-    #             # ktore nastepnie zapisuje w modelu/obiekcie
-    #             # o relacji to many przyjmujacej taka tablice obiektow
-    #         serializer.save(liked_by=new_liked_by, likes=likes)
-    #         return
-    #     else:
-    #         serializer.save(liked_by=[], likes=0)
-    #         return
         
 class CommentLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset=Comment.objects.all()
