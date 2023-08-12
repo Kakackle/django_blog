@@ -2,6 +2,12 @@
 ## modele
 1. TODO: zamiast usera w pelni od zera, zrobic rozszerzenie modelu z django.contrib.auth?
 
+2. TODO: jakies role uzytkownikow albo chociaz reprezentacja?
+Bo w sumie fajnie gdyby istnial szzegolny uzytkownik jak 'admin' czyli tworca bloga, ktory mialby specjalne prawa do usuwania i modyfikowania dowolnych postow, uzytkownikow itd  
+a zwykli uzytkownicy mogliby tylko modyfikowac wlasne
+dodatkowo mozna by potencjalnie dodac role modow, ktorzy np mogliby zarzadzac postami i tagami, ale nie userami zeby byli troche pod adminem itd
++ potem by to mozna reprezentowac wizualnie jakos na blogu
+
 ## endpointy i zwracanie informacji
 1. Powinien byc na 100% sposob zwracania informacji w response takich jak, ze np wybrana nazwa nie jest unique, co frontend by w response odbieral, co nie powinno byc trudne (bo axios zwraca obiekt res), ale kwestia jest jak sprawdzac w Django takie contraints i dodawac na tej bazie do response - nie powinno byc takie trudne, ale
 
@@ -9,7 +15,7 @@
 
 - jest to kwestia wtedy jaka metoda ma byc wywolana, czy post czy get czy cokolwiek i overwrite (czy jak to tam w pythonie sie nazywa) jej i w response ktore zwraca dodanie poza data: serializer.data (pamietaj o serializacji!) cos typu msg: 'wiadomosc'
 
-Zatem: TODO: w lakich endpointach bys chcial to dodac i co konkretnie zwracac
+Zatem: TODO: w jakich endpointach bys chcial to dodac i co konkretnie zwracac
 oraz kwestia gdy sa bledy jak rozpoznawac
 
 6. DONE: poki co zrobie tak ze we froncie sprawdzane czy juz polajkowane
@@ -33,7 +39,16 @@ a frontent powinien byc glownie od wyswietlania a nie trzymania stanu
 3. TODO: REFACTOR ENDPOINTÓW / VIEWS - rozbicie na mniejsze, intuicyjne, one purpose, np. dla postów, oddzielne /view, /like, /unlike i inne, zwykly z query, /all, /szczegolne warunki
 
 4. TODO: usuniecie zbednych views, w szczegolnosci duplikacja po ID i po slug, bo sie openschema denerwowalo i sam sie mylisz
+5. a poza tym TODO: niespójność w tym czy odnosisz się do endpointów po slug czy id - potem korzystając z takiego API nigdy nie wiadomo
 
+6. TODO: pełnoprawna dokumentacja schema, tzn zawierajaca:
+    - ogolny opis endpointu / view, co robi
+    - co podajesz w endpoincie
+    - jesli sa oczekiwane jakies query params to sprecyzowac?
+    - jakie dane oczekiwane sa w body - nazwy, typy, opis
+    - jakie dane zwraca tak samo
+
+7. TODO: Jakos mailing ogolnie ogarnac temat
 
 ## cleanup
 1. Rozdzielenie views, serializatorow itd na pliki?
