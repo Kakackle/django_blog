@@ -31,7 +31,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '') != False
 
 ALLOWED_HOSTS = ['web-production-4c6b.up.railway.app', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['web-production-4c6b.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://web-production-4c6b.up.railway.app']
 
 # Application definition
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'django_cleanup.apps.CleanupConfig',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -92,8 +93,11 @@ DATABASES = {
     }
 }
 # will look for DATABASE_URL in env
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
+
+database_url = "postgresql://postgres:29aT4yeCiBvv4lqRsqEg@containers-us-west-127.railway.app:5479/railway"
+DATABASES['default'] = dj_database_url.parse(database_url)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -147,7 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
-    "web-production-4c6b.up.railway.app"
+    "https://web-production-4c6b.up.railway.app"
 ]
 
 REST_FRAMEWORK = {
@@ -171,3 +175,13 @@ SPECTACULAR_SETTINGS = {
     # conjunction with appended prefixes in SERVERS.
     'SCHEMA_PATH_PREFIX_TRIM': False,
 }
+
+
+S3
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+
+AWS_S3_ACCESS_KEY_ID = os.environ.get("AWS_S3_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY = os.environ.get("AWS_S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME='eu-north-1'
+AWS_QUERYSTRING_AUTH = False
