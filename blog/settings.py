@@ -177,7 +177,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-S3
+#S3
 DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
 
 AWS_S3_ACCESS_KEY_ID = os.environ.get("AWS_S3_ACCESS_KEY_ID")
