@@ -29,8 +29,9 @@ SECRET_KEY = os.environ.get('SECRET KEY', '-=x=bmwnbnc$s0fughdku&dmd#g7j68h6klkj
 # DEBUG = True
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web-production-4c6b.up.railway.app', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = ['web-production-4c6b.up.railway.app']
 
 # Application definition
 
@@ -145,7 +146,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://localhost:5174"
+    "http://localhost:5174",
+    "web-production-4c6b.up.railway.app"
 ]
 
 REST_FRAMEWORK = {
