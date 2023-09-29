@@ -27,6 +27,14 @@ class CommentListAPIView(generics.ListCreateAPIView):
     #     methods=['GET']
     # )
 
+    @extend_schema(
+            parameters=[
+                OpenApiParameter(name='post', description='filter by post',
+                                required=False, type=str)
+            ],
+            description='custom get_queryset?'
+    )
+
     def get_queryset(self):
         queryset = Comment.objects.all().order_by("-date_posted")
         post = self.request.query_params.get("post", None)
@@ -44,6 +52,9 @@ class CommentCreateAPIView(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+    @extend_schema(
+        request=CommentSerializer
+    )
     def post(self, request, *args, **kwargs):
         print('self.request.data: ', self.request.data)
         return self.create(request, *args, **kwargs)

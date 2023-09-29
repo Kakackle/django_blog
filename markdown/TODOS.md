@@ -38,8 +38,8 @@ a frontent powinien byc glownie od wyswietlania a nie trzymania stanu
 
 3. TODO: REFACTOR ENDPOINTÓW / VIEWS - rozbicie na mniejsze, intuicyjne, one purpose, np. dla postów, oddzielne /view, /like, /unlike i inne, zwykly z query, /all, /szczegolne warunki
 
-4. TODO: usuniecie zbednych views, w szczegolnosci duplikacja po ID i po slug, bo sie openschema denerwowalo i sam sie mylisz
-5. a poza tym TODO: niespójność w tym czy odnosisz się do endpointów po slug czy id - potem korzystając z takiego API nigdy nie wiadomo
+4. DONE: usuniecie zbednych views, w szczegolnosci duplikacja po ID i po slug, bo sie openschema denerwowalo i sam sie mylisz
+5. a poza tym DONE: niespójność w tym czy odnosisz się do endpointów po slug czy id - potem korzystając z takiego API nigdy nie wiadomo
 
 6. TODO: pełnoprawna dokumentacja schema, tzn zawierajaca:
     - ogolny opis endpointu / view, co robi
@@ -48,7 +48,7 @@ a frontent powinien byc glownie od wyswietlania a nie trzymania stanu
     - jakie dane oczekiwane sa w body - nazwy, typy, opis
     - jakie dane zwraca tak samo
 
-7. TODO: Jakos mailing ogolnie ogarnac temat
+7. DONE: Jakos mailing ogolnie ogarnac temat
 
 ## cleanup
 1. Rozdzielenie views, serializatorow itd na pliki?
