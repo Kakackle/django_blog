@@ -16,16 +16,8 @@ class CommentListAPIView(generics.ListCreateAPIView):
 
     Post chosen by post_slug
     """
-    # queryset = Comment.objects.all()
-    
     serializer_class = CommentSerializer
     pagination_class = CustomPagination
-
-    # @extend_schema(
-    #     request=CommentSerializer,
-    #     responses={200: CommentSerializer},
-    #     methods=['GET']
-    # )
 
     @extend_schema(
             parameters=[
@@ -41,12 +33,6 @@ class CommentListAPIView(generics.ListCreateAPIView):
         if post is not None:
             queryset = queryset.filter(post__slug=post)
         return queryset
-    
-    # @extend_schema(description='Override a specific method', methods=["GET"])
-    # #@action(detail=True, methods=['post', 'get'])
-    # def test_method(self, request, pk=None):
-    #     # your action behaviour
-    #     pass
 
 class CommentCreateAPIView(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -73,11 +59,8 @@ class CommentCreateAPIView(viewsets.ModelViewSet):
         author = self.request.data.get("author")
         post = self.request.data.get("post")
         parent = self.request.data.get("parent")
-        # print('author: ', author)
         author = get_object_or_404(User, slug=author)
-        # print('author got')
         post = get_object_or_404(Post, slug=post)
-        # print('post got')
 
         #aktualizacja zliczen
         author_object = User.objects.get(slug=self.request.data.get('author'))
@@ -88,16 +71,11 @@ class CommentCreateAPIView(viewsets.ModelViewSet):
         post_object.comment_count +=1
         post_object.save()
 
-
         if parent != 'no_parent':
             parent = get_object_or_404(Comment, pk=parent)
-            # print('parent got')
             serializer.save(author=author, post=post, parent=parent)
         else:
             serializer.save(author=author, post=post)
-
-        
-        # return super().perform_create(serializer)
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
@@ -115,7 +93,7 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         post_object.save()
         return self.destroy(request, *args, **kwargs)
         
-class CommentLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
+class CommentLikeAPIView(generics.UpdateAPIView):
     queryset=Comment.objects.all()
     serializer_class = CommentSerializer
 
@@ -155,6 +133,3 @@ class CommentLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
 
             print('old liked_by: ', liked_by)
             return JsonResponse({'liked_by': liked_by, 'message': 'removed'},status=200)
-        # liked_by = comment.slug
-        print('users', liked_by)
-        pass

@@ -1,6 +1,5 @@
 from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                CommentLikeAPIView, CommentListAPIView,
-                                FollowedAPIView,
                                FollowingAPIView, ImagePostDetailAPIView,
                                ImagePostListAPIView, PostCreateAPIView,
                                PostDetailSlugAPIView, PostLikeAPIView,
@@ -17,7 +16,6 @@ urlpatterns = [
     path('posts/all/', PostListAllAPIView.as_view(), name="api_posts_list_all"),
     path('posts/trending/', PostListTrendingAPIView.as_view(), name="api_posts_list_trending"),
     path('posts/<slug:slug>', PostDetailSlugAPIView.as_view(), name="api_post_detail_slug"),
-    path('posts/followed/', FollowedAPIView.as_view(), name='api_followed_posts'),
     path('posts/<slug:slug>/view', PostViewAPIView.as_view(), name="api_post_viewed"),
     path('posts/<slug:slug>/like', PostLikeAPIView.as_view(), name="api_post_like"),
 
@@ -37,7 +35,7 @@ urlpatterns = [
 
     path('comments/', CommentListAPIView.as_view(), name="api_comment_list"),
     path('comments/<int:pk>', CommentDetailAPIView.as_view(), name="api_comment_detail"),
-    path('create_comment', CommentCreateAPIView.as_view({'get': 'list'}),
+    path('create_comment', CommentCreateAPIView.as_view({'post': 'create'}),
           name="api_comment_create"),
     path('comments/<int:pk>/like', CommentLikeAPIView.as_view(), name="api_comment_like"),
 

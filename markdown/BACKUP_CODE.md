@@ -27,3 +27,21 @@ class FollowAPIView(generics.RetrieveUpdateDestroyAPIView):
             followed_by.remove(new_follower)
         serializer.save(followed_by=followed_by)
 ```
+
+```
+class FollowedAPIView(generics.ListAPIView):
+    serializer_class = PostSerializerSlug
+    parser_classes = (MultiPartParser, FormParser)
+    lookup_field = 'slug'
+    def get_queryset(self):
+        queryset = Post.objects.all().order_by("-id")
+        by_user = self.request.query_params.get("by_user", None)
+        followed = Following.objects.filter(following_user=by_user).values_list('user', flat=True)
+        queryset = Post.objects.filter(author__slug__in=followed)
+        return queryset
+    
+    @extend_schema(description="get all posts by users followed by user in by_user",
+                   )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+```s

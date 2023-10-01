@@ -13,8 +13,6 @@ def post_image_view(request, slug):
     return HttpResponse(image, content_type="image/jpg")
 
 class ImagePostListAPIView(generics.ListCreateAPIView):
-    # queryset = ImagePost.objects.all(post)
-    # queryset = Post.objects.all().images
     serializer_class=PostImageSerializer
     parser_classes = (MultiPartParser, FormParser)
 
@@ -25,9 +23,6 @@ class ImagePostListAPIView(generics.ListCreateAPIView):
     
     def post(self, request, *args, **kwargs):
         print('self.request.data: ', self.request.data)
-        # user_pk = self.kwargs.get("user_pk")
-        # tags = self.request.data.get('tags')
-        # print('user_pk: ', user_pk, 'tags: ', tags)
         return self.create(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
@@ -37,15 +32,15 @@ class ImagePostListAPIView(generics.ListCreateAPIView):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        print('serializer.errors:', serializer.errors)
-
+        else:
+            print('serializer.errors:', serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     def perform_create(self, serializer):
         print('perform create')
         post = self.request.data.get("post")
         post = get_object_or_404(Post, slug=post)
-        # print('post got')
         serializer.save(post=post)
-
 
 class ImagePostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=PostImageSerializer

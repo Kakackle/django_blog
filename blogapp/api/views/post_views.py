@@ -10,23 +10,22 @@ from rest_framework.response import Response
 from datetime import datetime, timedelta
 from django.http import HttpResponse, JsonResponse
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter
 
-class PostListAPIView(generics.ListCreateAPIView):
-    # queryset = Post.objects.all()
+class PostListAPIView(generics.ListAPIView):
     serializer_class = PostSerializerSlug
     pagination_class = CustomPagination
     parser_classes = (MultiPartParser, FormParser)
-    # filter_backends = [SearchFilter]
-    # search_fields = ["title"]
+
     def get_queryset(self):
         queryset = Post.objects.all().order_by("-id")
-
-        
-        # dodatkowe filtracje
+ 
+        # filtracje po specyficznych warunkach
         liked_by = self.request.query_params.get("liked_by", None)
         own = self.request.query_params.get("own", None)
         commented = self.request.query_params.get("commented", None)
         followed = self.request.query_params.get("followed", None)
+        # posty polubione przez uzytkownika
         if liked_by:
             # wymaga przeslania slugu zalogowanego uzytkownika
             print('liked_by:', liked_by)
@@ -35,30 +34,28 @@ class PostListAPIView(generics.ListCreateAPIView):
             print('liked_posts:', user.liked_posts.all())
             queryset = user.liked_posts.all()
             print('qs:', queryset)
+        # tylko wlasne posty uzytkownika
         if own:
             print('own:', own)
             queryset = queryset.filter(author__username=own)
+        # tylko posty na ktorych uzytkownik skomentowal
         if commented:
-            # user = User.objects.get(slug=commented)
             queryset = queryset.filter(comments__author=commented).distinct()
             print('commented qs: ', queryset)
+        # tylko posty od uzytkownikow ktorych sledzisz
         if followed:
             followed_users = Following.objects.filter(following_user=followed).values_list('user', flat=True)
             queryset = queryset.filter(author__slug__in=followed_users)
             print('followed qs:', queryset)
 
         author = self.request.query_params.get("author", None)
-        # tag = self.request.query_params.get("tag", None)
         tags = self.request.query_params.getlist("tag", None)
-        # print("tags:",tags)
         title = self.request.query_params.get("title", None)
         days = self.request.query_params.get("days", None)
 
         if author is not None:
-            # queryset = queryset.filter(author__name__icontains=author)
             queryset = queryset.filter(author__username=author)
         if len(tags) is not 0:
-            # queryset = queryset.filter(tags__name__in=tags)
             queryset = queryset.filter(tags__in=tags).distinct()
             print('len: ', queryset.__len__())
         if title is not None:
@@ -67,7 +64,7 @@ class PostListAPIView(generics.ListCreateAPIView):
             date_limit = datetime.today() - timedelta(days=int(days))
             queryset = queryset.filter(date_posted__gte=date_limit)
 
-        # Ordering?
+        # Ordering
         ordering = self.request.query_params.get("ordering", None)
         if ordering:
             if ordering == "title":
@@ -80,45 +77,36 @@ class PostListAPIView(generics.ListCreateAPIView):
                 queryset = queryset.order_by("-likes")   
         return queryset
     
+    @extend_schema(description="get posts with filtering",
+                   parameters=[
+                       OpenApiParameter(name='author', description='author slug', type=str),
+                       OpenApiParameter(name='tags', description='tags array', type=list[int]),
+                       OpenApiParameter(name='title', description='by post title includes', type=str),
+                       OpenApiParameter(name='days', description='how many days ago posted', type=int),
+                       ])
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        # TODO: sprobuj tak jak autora zobaczy te tagi po slugach?
-        # moze powinno dzialac, bo to __name, __in itd to jakies sprytne jest, nie wiem
-
-
-class PostListAllAPIView(generics.ListCreateAPIView):
+class PostListAllAPIView(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug
     parser_classes = (MultiPartParser, FormParser)
-    # content = {'message': 'you just got all posts'}
-    # return Response()
 
-class PostListTrendingAPIView(generics.ListCreateAPIView):
-    # queryset = Post.objects.all()
+    @extend_schema(description="get all posts without filtering and pagination")
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class PostListTrendingAPIView(generics.ListAPIView):
     def get_queryset(self):
-        # return super().get_queryset()
         queryset = Post.objects.all().order_by("-trending_score")[:5]
         return queryset
         
     serializer_class = PostSerializerSlug
     parser_classes = (MultiPartParser, FormParser)
 
-
-class FollowedAPIView(generics.ListCreateAPIView):
-    # queryset = User.objects.all()
-    serializer_class = PostSerializerSlug
-    parser_classes = (MultiPartParser, FormParser)
-    lookup_field = 'slug'
-    def get_queryset(self):
-        queryset = Post.objects.all().order_by("-id")
-        by_user = self.request.query_params.get("by_user", None)
-        print('by_user ', by_user)
-        followed = Following.objects.filter(following_user=by_user).values_list('user', flat=True)
-        # user = User.objects.get(slug=by_user)
-        # followed = user.followed.all().values_list('user', flat=True)
-        print('followed: ', followed)
-        queryset = Post.objects.filter(author__slug__in=followed)
-        return queryset
-        # return super().get_queryset()
+    @extend_schema(description="get all 'trending' posts only")
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
@@ -132,14 +120,10 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         print('update request data:', self.request.data)
-        # views = self.request.data.get('views')
-        # likes = self.request.data.get('likes')
-        # liked_by = self.request.data.getlist('liked_by[]')
 
         # aktualizacja zliczen na tagach - moga sie zmienic w update
         post_object = Post.objects.get(slug=self.kwargs.get("slug"))
         tags = list(post_object.tags.all())
-        # print('tags: ', tags)
         for tag in tags:
             print('tag:', tag)
             tag.post_count +=1
@@ -168,7 +152,7 @@ class PostDetailSlugAPIView(generics.RetrieveUpdateDestroyAPIView):
             tag.save()
         return self.destroy(request, *args, **kwargs)
 
-class PostLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
+class PostLikeAPIView(generics.UpdateAPIView):
     queryset=Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'slug'
@@ -182,7 +166,7 @@ class PostLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
         # post wybrany przez endpoint
         post = Post.objects.get(slug=self.kwargs.get('slug'))
         post_pk = post.pk
-        # uzytkownicy, ktorzy w polubionych postach maja post_pk
+        # uzytkownicy, ktorzy w polubionych postach posiadaja post_pk
         liked_by = list(User.objects.filter(liked_posts=post_pk).values_list(
             'id', flat=True))
         
@@ -212,7 +196,7 @@ class PostLikeAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # proby rozbijania views na wiecej mniejszych single-purpose endpointow
 # dodawanie wyswietlen do postow prostym endpointem
-class PostViewAPIView(generics.RetrieveUpdateDestroyAPIView):
+class PostViewAPIView(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializerSlug
     lookup_field = 'slug'
@@ -227,7 +211,6 @@ class PostViewAPIView(generics.RetrieveUpdateDestroyAPIView):
         views += 1
         serializer.save(views=views)
 
-# generics.CreateAPIView
 class PostCreateAPIView(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_classes = {
