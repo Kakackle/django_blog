@@ -175,7 +175,7 @@ class PostSerializerCreate(serializers.ModelSerializer):
     img = serializers.ImageField(required=False)
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ['title', 'tags', 'content', 'img', 'date_posted']
 
 # ---------------------------------------------------------------------------- #
 #                                    IMAGES                                    #

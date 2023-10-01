@@ -1,6 +1,6 @@
 from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                CommentLikeAPIView, CommentListAPIView,
-                               FollowAPIView, FollowedAPIView,
+                                FollowedAPIView,
                                FollowingAPIView, ImagePostDetailAPIView,
                                ImagePostListAPIView, PostCreateAPIView,
                                PostDetailSlugAPIView, PostLikeAPIView,
@@ -26,11 +26,10 @@ urlpatterns = [
     
     path('users/', UserListAPIView.as_view(), name="api_user_list"),
     path('users/<slug:slug>', UserDetailSlugAPIView.as_view(), name="api_user_detail_slug"),
-    path('users/<slug:slug>/post', PostCreateAPIView.as_view({'get': 'list'}), name="api_post_create"),
+    path('users/<slug:slug>/post', PostCreateAPIView.as_view({'post':'create'}), name="api_post_create"),
     path('users/<slug:slug>/followed/', followed_view, name='followed_view'),
     path('users/<slug:slug>/followed_by/', followed_by_view, name='followed_by_view'),
 
-    # path('users/<slug:slug>/follow', FollowAPIView.as_view(), name='add_to_follows_view'),
     path('users/<slug:slug>/follow', add_to_follows, name='add_to_follows_view'),
     path('users/<slug:slug>/unfollow', remove_from_follows, name='remove_from_follows_view'),
 

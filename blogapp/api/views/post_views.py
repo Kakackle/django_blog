@@ -9,6 +9,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from datetime import datetime, timedelta
 from django.http import HttpResponse, JsonResponse
+from drf_spectacular.utils import extend_schema
 
 class PostListAPIView(generics.ListCreateAPIView):
     # queryset = Post.objects.all()
@@ -237,11 +238,9 @@ class PostCreateAPIView(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
-
-    def post(self, request, *args, **kwargs):
-        print('self.request.data: ', self.request.data)
-        return self.create(request, *args, **kwargs)
-
+    
+    @extend_schema(tags=["posts",],
+                   description="create post authored by specified user")
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -249,7 +248,9 @@ class PostCreateAPIView(viewsets.ModelViewSet):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        print('serializer.errors:', serializer.errors)
+        else:
+            print('serializer.errors:', serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def perform_create(self, serializer):
         user_slug = self.kwargs.get("slug")
@@ -285,3 +286,6 @@ class PostCreateAPIView(viewsets.ModelViewSet):
         date_posted = self.request.data.get('date_posted')
         serializer.save(author=author, tags=tagsList, date_posted=date_posted, img=img)
         # return super().perform_create(serializer)
+        return Response(data={"message": "post created"},
+                        status=status.HTTP_201_CREATED)
+    

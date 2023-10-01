@@ -93,11 +93,11 @@ DATABASES = {
     }
 }
 # will look for DATABASE_URL in env
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
 
-# database_url = "postgresql://postgres:29aT4yeCiBvv4lqRsqEg@containers-us-west-127.railway.app:5479/railway"
-# DATABASES['default'] = dj_database_url.parse(database_url)
+database_url = "postgresql://postgres:29aT4yeCiBvv4lqRsqEg@containers-us-west-127.railway.app:5479/railway"
+DATABASES['default'] = dj_database_url.parse(database_url)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -181,8 +181,12 @@ SPECTACULAR_SETTINGS = {
 #S3
 DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
 
-AWS_S3_ACCESS_KEY_ID = os.environ.get("AWS_S3_ACCESS_KEY_ID")
-AWS_S3_SECRET_ACCESS_KEY = os.environ.get("AWS_S3_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+# AWS_S3_ACCESS_KEY_ID = os.environ.get("AWS_S3_ACCESS_KEY_ID")
+# AWS_S3_SECRET_ACCESS_KEY = os.environ.get("AWS_S3_SECRET_ACCESS_KEY")
+# AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ACCESS_KEY_ID = "AKIAZM2WW5UIOI2K4CXQ"
+AWS_S3_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "django-blog-railway"
+
 AWS_S3_REGION_NAME='eu-north-1'
 AWS_QUERYSTRING_AUTH = False
