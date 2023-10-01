@@ -8,7 +8,7 @@ from blogapp.api.views import (CommentCreateAPIView, CommentDetailAPIView,
                                TagDetailSlugAPIView, TagListAPIView,
                                UserDetailSlugAPIView, UserListAPIView,
                                add_to_follows, followed_by_view, followed_view,
-                               post_image_view, remove_from_follows)
+                               PostImageView, remove_from_follows)
 from django.urls import include, path
 
 urlpatterns = [
@@ -39,7 +39,8 @@ urlpatterns = [
           name="api_comment_create"),
     path('comments/<int:pk>/like', CommentLikeAPIView.as_view(), name="api_comment_like"),
 
-    path('image/<slug:slug>', post_image_view, name='post_image_view'),
+    # path('image/<slug:slug>', post_image_view, name='post_image_view'),
+    path('image/<slug:slug>', PostImageView.as_view(), name='post_image_view'),
     path('posts/<slug:slug>/images', ImagePostListAPIView.as_view(), name="api_post_images"),
     path('posts/<slug:slug>/images/<str:name>', ImagePostDetailAPIView.as_view(), name="api_post_image_name"),
 ]

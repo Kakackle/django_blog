@@ -21,9 +21,8 @@ oraz kwestia gdy sa bledy jak rozpoznawac
     - potem powiazywanie tworzonych postow z aktualnym uzytkownikiem itd
     - komentarze - sposob powiazania w django i odpowiadania i forma na tworzenie
 
-2. TODO: oczyszczenie metod endpoints tylko pod te ktore sa wykorzystywane by dokumentacja byla poprawna, a calosc bardziej restowa
 
-3. TODO: pełnoprawna dokumentacja schema, tzn zawierajaca:
+3. FIXME: [partially done] pełnoprawna dokumentacja schema, tzn zawierajaca:
     - ogolny opis endpointu / view, co robi
     - co podajesz w endpoincie
     - jesli sa oczekiwane jakies query params to sprecyzowac?

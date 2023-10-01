@@ -1,16 +1,27 @@
 from blogapp.models import Post, ImagePost
 from blogapp.api.serializers import PostImageSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import generics, status, viewsets
 from rest_framework.generics import get_object_or_404
+from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 
-@api_view(['GET', 'POST'])
-def post_image_view(request, slug):
-    image = Post.objects.get(slug=slug).img
-    return HttpResponse(image, content_type="image/jpg")
+class PostImageView(APIView):
+    serializer_class=PostImageSerializer
+
+    def get_object(self, slug):
+        try:
+            image = Post.objects.get(slug=slug).img
+        except Post.DoesNotExist:
+            raise Http404
+    def get(self, request, slug):
+        image = Post.objects.get(slug=slug).img
+        # serializer = PostImageSerializer(image)
+        return HttpResponse(image, content_type="image/jpg")
+
 
 class ImagePostListAPIView(generics.ListCreateAPIView):
     serializer_class=PostImageSerializer
