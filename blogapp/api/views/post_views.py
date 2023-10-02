@@ -80,7 +80,7 @@ class PostListAPIView(generics.ListAPIView):
     @extend_schema(description="get posts with filtering",
                    parameters=[
                        OpenApiParameter(name='author', description='author slug', type=str),
-                       OpenApiParameter(name='tags', description='tags array', type=list[int]),
+                       OpenApiParameter(name='tags', description='tags array', type=list),
                        OpenApiParameter(name='title', description='by post title includes', type=str),
                        OpenApiParameter(name='days', description='how many days ago posted', type=int),
                        ])

@@ -31,7 +31,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '') != False
 
 ALLOWED_HOSTS = ['web-production-4c6b.up.railway.app', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://web-production-4c6b.up.railway.app', 'https://main--stupendous-florentine-92e305.netlify.app']
+CSRF_TRUSTED_ORIGINS = ['https://web-production-4c6b.up.railway.app', 'https://vue-blog-front.netlify.app']
 
 # Application definition
 
@@ -152,7 +152,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
     "https://web-production-4c6b.up.railway.app",
-    "https://main--stupendous-florentine-92e305.netlify.app",
+    "https://vue-blog-front.netlify.app",
 ]
 
 REST_FRAMEWORK = {
